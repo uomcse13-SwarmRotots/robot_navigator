@@ -5,7 +5,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <ros/ros.h>
 
-#include <swarm_navigator/cmd_val_controller.h>
+#include <controller/cmd_val_controller.h>
+#include <planner/navigation_planner.h>
 
 using namespace sensor_msgs;
 using namespace message_filters;
@@ -37,8 +38,11 @@ void callback(const geometry_msgs::PoseStamped& goal)
 
     tf::Stamped<tf::Pose> global_pose;
     controller->getRobotPose(global_pose);
-    navigation_planner->startTraversal(global_pose);
-    controller->achieveGoal(goal);
+    geometry_msgs::PoseStamped current_position;
+    tf::poseStampedTFToMsg(global_pose, current_position);
+    std::vector<geometry_msgs::PoseStamped> plan = 
+                    navigation_planner->getNavPlan(current_position);
+    controller->followPath(plan);
    
     
 }
@@ -69,11 +73,13 @@ int main(int argc, char** argv)
     // TimeSynchronizer<nav_msgs::Odometry, sensor_msgs::PointCloud2> sync(odom_sub, points_sub, 10);
     // sync.registerCallback(boost::bind(&callback, _1, _2));
 
+  
+    navigation_planner = new NavigationPlanner(nh,topic_octomap);
+    navigation_planner->start();
+
     ros::NodeHandle simple_nh("move_base_simple");
     ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, callback);
 
-    navigation_planner = new NavigationPlanner(node_handler,topic_octomap);
-    navigation_planner->start();
 
     // ros::Subscriber goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1);
     ros::spin();

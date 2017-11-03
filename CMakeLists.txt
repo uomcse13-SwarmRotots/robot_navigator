@@ -196,14 +196,14 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
 add_library(navigation_planner src/planner/navigation_planner.cpp)
-add_executable(map_merger src/merger/map_merger.cpp)
+#add_executable(map_merger src/merger/map_merger.cpp)
 
 add_library(cmd_val_controller  src/controller/cmd_val_controller.cpp)
 #target_link_libraries ( PCL_Processing ${PCL_LIBRARIES} ${catkin_LIBRARIES} )
-target_link_libraries ( map_merger 
-    ${PCL_LIBRARIES} 
-    ${catkin_LIBRARIES} 
-)
+#target_link_libraries ( map_merger 
+#    ${PCL_LIBRARIES} 
+#    ${catkin_LIBRARIES} 
+#)
 
 add_executable(navigation_planner_exec src/planner/navigation_planner_exec.cpp)
 target_link_libraries ( navigation_planner_exec 
@@ -212,9 +212,10 @@ target_link_libraries ( navigation_planner_exec
     navigation_planner
 )
 
-# add_executable(goal_tester src/controller/goal_tester.cpp)
-# target_link_libraries(goal_tester
-#     ${catkin_LIBRARIES}
-#     cmd_val_controller
-
-# )
+add_executable(goal_tester src/controller/goal_tester.cpp)
+target_link_libraries(goal_tester
+    ${PCL_LIBRARIES} 
+    ${catkin_LIBRARIES}
+    cmd_val_controller
+    navigation_planner
+)
