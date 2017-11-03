@@ -114,7 +114,9 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
+
 include_directories(
+  include 
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -187,3 +189,22 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+find_package( PCL REQUIRED )
+include_directories(  ${catkin_INCLUDE_DIRS}  ${PCL_INCLUDE_DIRS} )
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
+#add_executable(PCL_Processing src/PCL_Processing.cpp)
+#add_executable(wireless_strength script/Wireless_Strength.cpp)
+
+add_library(nav_plan src/navigation_planner.cpp)
+#target_link_libraries ( PCL_Processing ${PCL_LIBRARIES} ${catkin_LIBRARIES} )
+
+
+add_executable(nav_plan_exec src/nav_plan_test.cpp)
+target_link_libraries ( nav_plan_exec 
+    ${PCL_LIBRARIES} 
+    ${catkin_LIBRARIES} 
+    nav_plan
+)
