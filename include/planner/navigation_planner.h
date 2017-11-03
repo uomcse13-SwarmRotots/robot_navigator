@@ -197,7 +197,7 @@ class NavigationPlanner{
         std::vector<geometry_msgs::PoseStamped> publishPath(struct Graph_Node *node);
         pcl::PointCloud<pcl::PointXYZ>::Ptr calculateConvexHull(vector<pcl::PointXYZ> point_vector,int point_type);
         pcl::PointCloud<pcl::PointXYZ>::Ptr getConvexHull(float x_cordinate, float y_cordinate, float z_cordinate, int point_type, float box_dimension);
-        
+
     public:
         /*
             methods
@@ -208,6 +208,7 @@ class NavigationPlanner{
         NavigationPlanner(ros::NodeHandle &nh, std::string topic);
         void neighbourhoodCallback(const geometry_msgs::PoseStamped& pose);
         void startTraversal(const geometry_msgs::PoseStamped& pose);
+        std::vector<geometry_msgs::PoseStamped> getNavPlan(const geometry_msgs::PoseStamped& pose);
         void cloudCallback(const PointCloud::ConstPtr& msg);
         ~NavigationPlanner();
 };

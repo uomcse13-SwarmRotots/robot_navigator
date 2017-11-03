@@ -790,9 +790,9 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
             plan.push_back(pose);
         }
 
-        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); it != plan.end (); ++it){
+        // for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); it != plan.end (); ++it){
         
-        }
+        // }
         //marker_pub.publish(points);
         //marker_pub.publish(line_strip);
         //marker_pub.publish(line_list);
@@ -803,6 +803,28 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
   }
 }
 
+std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geometry_msgs::PoseStamped& pose){
+    float x_cordinate = pose.pose.position.x;
+    float y_cordinate = pose.pose.position.y;
+    float z_cordinate = pose.pose.position.z;
+    
+    if(found_nodes.hasValue(x_cordinate,y_cordinate,z_cordinate)){
+        current_node = found_nodes.getValue(x_cordinate,y_cordinate,z_cordinate);
+        current_node->path_cost = 0;
+        found_nodes.setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
+    }else{
+        current_node =  new Graph_Node;
+        current_node->x_cordinate = x_cordinate;
+        current_node->y_cordinate = y_cordinate;
+        current_node->z_cordinate = z_cordinate;
+        current_node->path_cost = 0;
+        current_node->predecessor = NULL;
+        found_nodes.setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
+    }
+    
+    struct Graph_Node *node = breadthFirstSearch(x_cordinate,y_cordinate,z_cordinate);
+    return publishPath(node);
+}
 
 void NavigationPlanner::startTraversal(const geometry_msgs::PoseStamped& pose){
     float x_cordinate = pose.pose.position.x;
