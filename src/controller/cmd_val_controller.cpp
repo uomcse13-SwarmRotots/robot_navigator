@@ -196,6 +196,40 @@ namespace swarm_navigator {
         return false;
     }
 
+    bool CmdValController::getRobotPose(tf::Stamped<tf::Pose>& global_pose) const {
+        global_pose.setIdentity();
+        tf::Stamped < tf::Pose > robot_pose;
+        robot_pose.setIdentity();
+        robot_pose.frame_id_ = base_link_;
+        robot_pose.stamp_ = ros::Time();
+        ros::Time current_time = ros::Time::now();  // save time for checking tf delay later
+
+        listener_.waitForTransform(base_link_, odom_link_, 
+            current_time, ros::Duration(1.0));
+        // get the global pose of the robot
+        try
+        {
+            listener_.transformPose(odom_link_, robot_pose, global_pose);
+        }
+        catch (tf::LookupException& ex)
+        {
+            ROS_ERROR_THROTTLE(1.0, "Error: %s\n", ex.what());
+            return false;
+        }
+        catch (tf::ConnectivityException& ex)
+        {
+            ROS_ERROR_THROTTLE(1.0, "Error: %s\n", ex.what());
+            return false;
+        }
+        catch (tf::ExtrapolationException& ex)
+        {
+            ROS_ERROR_THROTTLE(1.0, "Error: %s\n", ex.what());
+            return false;
+        }
+       
+        return true;
+    }
+
     bool CmdValController::achieveGoal(const geometry_msgs::PoseStamped& goal){
         
         // ros::Time time = ros::Time::now();//ros::Time(0)
