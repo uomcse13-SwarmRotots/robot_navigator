@@ -790,6 +790,9 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
             plan.push_back(pose);
         }
 
+        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); it != plan.end (); ++it){
+        
+        }
         //marker_pub.publish(points);
         //marker_pub.publish(line_strip);
         //marker_pub.publish(line_list);

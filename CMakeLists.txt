@@ -195,11 +195,13 @@ include_directories(  ${catkin_INCLUDE_DIRS}  ${PCL_INCLUDE_DIRS} )
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-#add_executable(PCL_Processing src/PCL_Processing.cpp)
-#add_executable(wireless_strength script/Wireless_Strength.cpp)
-
 add_library(navigation_planner src/planner/navigation_planner.cpp)
-#target_link_libraries ( PCL_Processing ${PCL_LIBRARIES} ${catkin_LIBRARIES} )
+add_executable(map_merger src/merger/map_merger.cpp)
+
+target_link_libraries ( map_merger 
+    ${PCL_LIBRARIES} 
+    ${catkin_LIBRARIES} 
+)
 
 add_executable(navigation_planner_exec src/planner/navigation_planner_exec.cpp)
 target_link_libraries ( navigation_planner_exec 
@@ -207,3 +209,5 @@ target_link_libraries ( navigation_planner_exec
     ${catkin_LIBRARIES} 
     navigation_planner
 )
+
+
