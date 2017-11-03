@@ -243,7 +243,7 @@ namespace swarm_navigator {
         // //record the starting transform from the odometry to the base frame
         // listener_.lookupTransform(base_link_, odom_link_, 
         //                             ros::Time::now(), robot_transform);
-
+        ROS_INFO("Goal came...");
         tf::Stamped<tf::Pose> global_pose;
         getRobotPose(global_pose);
         geometry_msgs::PoseStamped current_position;

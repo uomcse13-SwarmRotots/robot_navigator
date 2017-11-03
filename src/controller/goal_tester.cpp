@@ -42,6 +42,7 @@ void callback(const geometry_msgs::PoseStamped& goal)
     tf::poseStampedTFToMsg(global_pose, current_position);
     std::vector<geometry_msgs::PoseStamped> plan = 
                     navigation_planner->getNavPlan(current_position);
+    ROS_INFO("Done planning....");
     controller->followPath(plan);
    
     
