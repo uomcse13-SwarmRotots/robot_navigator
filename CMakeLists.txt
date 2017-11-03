@@ -199,6 +199,7 @@ add_definitions(${PCL_DEFINITIONS})
 #add_executable(wireless_strength script/Wireless_Strength.cpp)
 
 add_library(navigation_planner src/planner/navigation_planner.cpp)
+add_library(cmd_val_controller  src/controller/cmd_val_controller.cpp)
 #target_link_libraries ( PCL_Processing ${PCL_LIBRARIES} ${catkin_LIBRARIES} )
 
 add_executable(navigation_planner_exec src/planner/navigation_planner_exec.cpp)
@@ -207,3 +208,10 @@ target_link_libraries ( navigation_planner_exec
     ${catkin_LIBRARIES} 
     navigation_planner
 )
+
+# add_executable(goal_tester src/controller/goal_tester.cpp)
+# target_link_libraries(goal_tester
+#     ${catkin_LIBRARIES}
+#     cmd_val_controller
+
+# )
