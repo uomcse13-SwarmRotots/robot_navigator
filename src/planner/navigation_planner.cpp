@@ -440,7 +440,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
 
     if(cloud_filtered->size()>0){
         // writer.write<pcl::PointXYZ> ("samp11-utm_object.pcd", *cloud_filtered, false);
-        planerCoefficientApproximation(cloud_filtered);
+        //planerCoefficientApproximation(cloud_filtered);
     }else{
         return 1;
     }
@@ -549,16 +549,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             }
         }
     }else{
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = front_x;
-        temp_node->y_cordinate = front_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost>temp_node->path_cost){
-            found_nodes->getValue(front_x,front_y,z_cordinate)->predecessor = current_node;
-            found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost = temp_node->path_cost;
-        }
+        // struct Graph_Node *temp_node = new Graph_Node;
+        // temp_node->x_cordinate = front_x;
+        // temp_node->y_cordinate = front_y;
+        // temp_node->z_cordinate = z_cordinate;
+        // temp_node->predecessor = current_node;
+        // temp_node->path_cost = current_node->path_cost+1;
+        // if(found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost>temp_node->path_cost){
+        //     found_nodes->getValue(front_x,front_y,z_cordinate)->predecessor = current_node;
+        //     found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost = temp_node->path_cost;
+        // }
     }
 
     float front_left_x = x_cordinate + box_dimension;
@@ -588,16 +588,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             }
         }
     }else{
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = front_left_x;
-        temp_node->y_cordinate = front_left_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost>temp_node->path_cost){
-            found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->predecessor = current_node;
-            found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost = temp_node->path_cost;
-        }
+        // struct Graph_Node *temp_node = new Graph_Node;
+        // temp_node->x_cordinate = front_left_x;
+        // temp_node->y_cordinate = front_left_y;
+        // temp_node->z_cordinate = z_cordinate;
+        // temp_node->predecessor = current_node;
+        // temp_node->path_cost = current_node->path_cost+1;
+        // if(found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost>temp_node->path_cost){
+        //     found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->predecessor = current_node;
+        //     found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost = temp_node->path_cost;
+        // }
     }      
 
     float left_x = x_cordinate;
@@ -626,16 +626,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             }
         } 
     }else{
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = left_x;
-        temp_node->y_cordinate = left_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost>temp_node->path_cost){
-            found_nodes->getValue(left_x,left_y,z_cordinate)->predecessor = current_node;
-            found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost = temp_node->path_cost;
-        }
+        // struct Graph_Node *temp_node = new Graph_Node;
+        // temp_node->x_cordinate = left_x;
+        // temp_node->y_cordinate = left_y;
+        // temp_node->z_cordinate = z_cordinate;
+        // temp_node->predecessor = current_node;
+        // temp_node->path_cost = current_node->path_cost+1;
+        // if(found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost>temp_node->path_cost){
+        //     found_nodes->getValue(left_x,left_y,z_cordinate)->predecessor = current_node;
+        //     found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost = temp_node->path_cost;
+        // }
     }
 
     float back_left_x = x_cordinate - box_dimension;
@@ -664,16 +664,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             }
         } 
     }else{
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = back_left_x;
-        temp_node->y_cordinate = back_left_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost>temp_node->path_cost){
-            found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->predecessor = current_node;
-            found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost = temp_node->path_cost;
-        }
+        // struct Graph_Node *temp_node = new Graph_Node;
+        // temp_node->x_cordinate = back_left_x;
+        // temp_node->y_cordinate = back_left_y;
+        // temp_node->z_cordinate = z_cordinate;
+        // temp_node->predecessor = current_node;
+        // temp_node->path_cost = current_node->path_cost+1;
+        // if(found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost>temp_node->path_cost){
+        //     found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->predecessor = current_node;
+        //     found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost = temp_node->path_cost;
+        // }
     }
 
     float back_x = x_cordinate - box_dimension;
@@ -708,16 +708,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             }
         } 
     }else{
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = back_x;
-        temp_node->y_cordinate = back_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost>temp_node->path_cost){
-            found_nodes->getValue(back_x,back_y,z_cordinate)->predecessor = current_node;
-            found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost = temp_node->path_cost;
-        }
+        // struct Graph_Node *temp_node = new Graph_Node;
+        // temp_node->x_cordinate = back_x;
+        // temp_node->y_cordinate = back_y;
+        // temp_node->z_cordinate = z_cordinate;
+        // temp_node->predecessor = current_node;
+        // temp_node->path_cost = current_node->path_cost+1;
+        // if(found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost>temp_node->path_cost){
+        //     found_nodes->getValue(back_x,back_y,z_cordinate)->predecessor = current_node;
+        //     found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost = temp_node->path_cost;
+        // }
     }
 
     float back_right_x = x_cordinate - box_dimension;
@@ -745,16 +745,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             }
         } 
     }else{
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = back_right_x;
-        temp_node->y_cordinate = back_right_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost>temp_node->path_cost){
-            found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->predecessor = current_node;
-            found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost = temp_node->path_cost;
-        }
+        // struct Graph_Node *temp_node = new Graph_Node;
+        // temp_node->x_cordinate = back_right_x;
+        // temp_node->y_cordinate = back_right_y;
+        // temp_node->z_cordinate = z_cordinate;
+        // temp_node->predecessor = current_node;
+        // temp_node->path_cost = current_node->path_cost+1;
+        // if(found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+        //     found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->predecessor = current_node;
+        //     found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost = temp_node->path_cost;
+        // }
     }
 
     float right_x = x_cordinate;
@@ -783,16 +783,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             }
         } 
     }else{
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = right_x;
-        temp_node->y_cordinate = right_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost>temp_node->path_cost){
-            found_nodes->getValue(right_x,right_y,z_cordinate)->predecessor = current_node;
-            found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost = temp_node->path_cost;
-        }
+        // struct Graph_Node *temp_node = new Graph_Node;
+        // temp_node->x_cordinate = right_x;
+        // temp_node->y_cordinate = right_y;
+        // temp_node->z_cordinate = z_cordinate;
+        // temp_node->predecessor = current_node;
+        // temp_node->path_cost = current_node->path_cost+1;
+        // if(found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost>temp_node->path_cost){
+        //     found_nodes->getValue(right_x,right_y,z_cordinate)->predecessor = current_node;
+        //     found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost = temp_node->path_cost;
+        // }
     }
 
     float front_right_x = x_cordinate + box_dimension;
@@ -820,16 +820,16 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 node_queue.push(temp_node);
             }
         }else{
-            struct Graph_Node *temp_node = new Graph_Node;
-            temp_node->x_cordinate = front_right_x;
-            temp_node->y_cordinate = front_right_y;
-            temp_node->z_cordinate = z_cordinate;
-            temp_node->predecessor = current_node;
-            temp_node->path_cost = current_node->path_cost+1;
-            if(found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost>temp_node->path_cost){
-                found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->predecessor = current_node;
-                found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost = temp_node->path_cost;
-            }
+            // struct Graph_Node *temp_node = new Graph_Node;
+            // temp_node->x_cordinate = front_right_x;
+            // temp_node->y_cordinate = front_right_y;
+            // temp_node->z_cordinate = z_cordinate;
+            // temp_node->predecessor = current_node;
+            // temp_node->path_cost = current_node->path_cost+1;
+            // if(found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+            //     found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->predecessor = current_node;
+            //     found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost = temp_node->path_cost;
+            // }
         }
     } 
 
@@ -854,7 +854,7 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
     int count = 0;
     geometry_msgs::PoseStamped pose;
     std::vector<geometry_msgs::PoseStamped> plan;
-    while (ros::ok() && term!=1000){
+    while (ros::ok() && term!=3000){
         visualization_msgs::Marker points, line_strip, line_list;
         points.header.frame_id = line_strip.header.frame_id = line_list.header.frame_id = "/odom";
         points.header.stamp = line_strip.header.stamp = line_list.header.stamp = ros::Time::now();
@@ -889,7 +889,7 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
         
 
         while(temp_node1!=NULL){
-            ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->z_cordinate);
+            
             geometry_msgs::Point p;
             p.x = temp_node1->x_cordinate;
             p.y = temp_node1->y_cordinate;
@@ -908,9 +908,9 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
             pose.pose.orientation.z = 0.0;
             pose.pose.orientation.w = 1.0;
             if(count == 0){
+                ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->z_cordinate);
                 plan.push_back(pose);    
             }
-            
             temp_node1 = temp_node1->predecessor;
         }
 
@@ -924,6 +924,7 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
         term++;
         count++;
     }
+    term=0;
     ROS_INFO("PATH PLANNED");
     return plan;
   

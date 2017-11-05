@@ -303,13 +303,11 @@ namespace swarm_navigator {
     }
 
     bool CmdValController::followPath(const std::vector<geometry_msgs::PoseStamped>& plan){
-        
     
-
-        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); 
-                                it != plan.end (); ++it){
-            //ROS_INFO("cordinates %f %f %f",(*it).pose.position.x,(*it).pose.position.y,(*it).pose.position.z);
-            //achieveGoal(*it);  
+        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end ()-1; 
+                                it != plan.begin (); --it){
+            ROS_INFO("cordinates %f %f %f",(*it).pose.position.x,(*it).pose.position.y,(*it).pose.position.z);
+            // achieveGoal(*it);  
         }
 
         return true;
