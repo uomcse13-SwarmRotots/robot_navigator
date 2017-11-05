@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     std::string topic_octomap;
 
     ros::NodeHandle private_nh("~");     
-    private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/mobile_base/commands/velocity")); 
+    private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/cmd_vel")); 
     private_nh.param("odom_topic", topic_odom, std::string("/odom")); 
     private_nh.param("base_link", base_link, std::string("base_footprint")); 
     private_nh.param("odom_link", odom_link, std::string("odom")); 

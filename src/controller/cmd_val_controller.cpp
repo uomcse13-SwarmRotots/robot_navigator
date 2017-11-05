@@ -161,8 +161,7 @@ namespace swarm_navigator {
         
         ros::Rate rate(10.0);
         bool done = false;
-        while (!done && nh_.ok())
-        {
+        while (!done && nh_.ok()){
             //send the drive command
             publisher_.publish(base_cmd);
             rate.sleep();
@@ -292,13 +291,13 @@ namespace swarm_navigator {
             yaw_goal_robot_diff*=-1;
             clockwise = true;
         }
-           
+        ROS_INFO("angle: [%f]", yaw_goal_robot_diff);
         turn(clockwise,yaw_goal_robot_diff);
         double distance = hypot(current_position.pose.position.x - goal.pose.position.x
                     , current_position.pose.position.y - goal.pose.position.y);
         ROS_INFO("distance: [%f]", distance);
         driveForward(distance);        
-        turn(true,2*M_PI);
+        //turn(true,2*M_PI);
 
         return true;
     }
@@ -307,8 +306,8 @@ namespace swarm_navigator {
         
     
 
-        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); 
-                                it != plan.end (); ++it){
+        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end (); 
+                                it != plan.begin (); --it){
             achieveGoal(*it);  
         }
 
