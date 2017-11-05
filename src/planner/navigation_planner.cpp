@@ -396,7 +396,7 @@ void NavigationPlanner::clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& obje
             std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
             std::stringstream ss;
             ss << "cloud_cluster_" << j << ".pcd";
-            writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
+            // writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
             planerCoefficientApproximation(cloud_cluster);
             j++;
         }
@@ -431,7 +431,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
 
     pcl::PCDWriter writer;
     if(cloud_filtered->size()>100){
-        writer.write<pcl::PointXYZ> ("samp11-utm_ground.pcd", *cloud_filtered, false);
+        // writer.write<pcl::PointXYZ> ("samp11-utm_ground.pcd", *cloud_filtered, false);
     }else{
         return -1;
     }
@@ -439,7 +439,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
     extract.filter (*cloud_filtered);
 
     if(cloud_filtered->size()>0){
-        writer.write<pcl::PointXYZ> ("samp11-utm_object.pcd", *cloud_filtered, false);
+        // writer.write<pcl::PointXYZ> ("samp11-utm_object.pcd", *cloud_filtered, false);
         planerCoefficientApproximation(cloud_filtered);
     }else{
         return 1;
@@ -518,275 +518,320 @@ NavigationPlanner::~NavigationPlanner(){}
 
 struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, float y_cordinate, float z_cordinate){
 
-    float box_dimension = 0.5; // half of robot length
+    float box_dimension = 1.0; // half of robot length
     pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
 
     int result;
     
-    float front_x = x_cordinate + 2*box_dimension;
+    float front_x = x_cordinate + box_dimension;
     float front_y = y_cordinate;
-    convex_cloud = getConvexHull(front_x,front_y,z_cordinate,1,0.5);
-    result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 1");
-        return current_node;
-    }else if(result == 1){
+    if(!found_nodes->hasValue(front_x,front_y,z_cordinate)){
+        convex_cloud = getConvexHull(front_x,front_y,z_cordinate,1,0.5);
+        result = groundNonGroundExtraction(convex_cloud);
+        if(result == -1){
+            ROS_INFO("Return on 1");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = front_x;
+            temp_node->y_cordinate = front_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(front_x,front_y,z_cordinate)){
+                if(found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost>temp_node->path_cost){
+                    found_nodes->getValue(front_x,front_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{
+                found_nodes->setValue(front_x,front_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+            }
+        }
+    }else{
         struct Graph_Node *temp_node = new Graph_Node;
         temp_node->x_cordinate = front_x;
         temp_node->y_cordinate = front_y;
         temp_node->z_cordinate = z_cordinate;
         temp_node->predecessor = current_node;
         temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(front_x,front_y,z_cordinate)){
-            if(found_nodes.getValue(front_x,front_y,z_cordinate)->path_cost>temp_node->path_cost){
-                node_queue.push(temp_node);
-            }
-        }else{
-            found_nodes.setValue(front_x,front_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
+        if(found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost>temp_node->path_cost){
+            found_nodes->getValue(front_x,front_y,z_cordinate)->predecessor = current_node;
+            found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost = temp_node->path_cost;
         }
-    }else{
-        float temp_x = x_cordinate + box_dimension;
-        float temp_y = y_cordinate;
-      
-        temp_x = x_cordinate + 2*box_dimension;
-        temp_y = y_cordinate + box_dimension;
-
-        temp_x = x_cordinate + 2*box_dimension;
-        temp_y = y_cordinate - box_dimension;
     }
 
-    float left_x = x_cordinate;
-    float left_y = y_cordinate + 2*box_dimension;
-    convex_cloud = getConvexHull(left_x,left_y,z_cordinate,3,0.5);
-    result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 3");
-        return current_node;
-    }else if(result == 1){
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = left_x;
-        temp_node->y_cordinate = left_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(left_x,left_y,z_cordinate)){
-            if(found_nodes.getValue(left_x,left_y,z_cordinate)->path_cost>temp_node->path_cost){
-                node_queue.push(temp_node);
-            }
-        }else{
-            found_nodes.setValue(left_x,left_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
-        }
-    }else{
-        float temp_x = x_cordinate;
-        float temp_y = y_cordinate + box_dimension;
-
-        temp_x = x_cordinate + box_dimension;
-        temp_y = y_cordinate + 2*box_dimension;
-
-        temp_x = x_cordinate - box_dimension;
-        temp_y = y_cordinate + 2*box_dimension;
-    } 
-
-    float back_x = x_cordinate - 2*box_dimension;
-    float back_y = y_cordinate;
-    convex_cloud = getConvexHull(back_x,back_y,z_cordinate,5,0.5);
-    result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 5");
-        return current_node;
-    }else if(result == 1){
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = back_x;
-        temp_node->y_cordinate = back_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(back_x,back_y,z_cordinate)){
-            if(found_nodes.getValue(back_x,back_y,z_cordinate)->path_cost>temp_node->path_cost){
-                node_queue.push(temp_node);
-            }
-        }else{
-            found_nodes.setValue(back_x,back_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
-        }
-    }else{
-        float temp_x = x_cordinate - box_dimension;
-        float temp_y = y_cordinate;
-
-        temp_x = x_cordinate - 2*box_dimension;
-        temp_y = y_cordinate + box_dimension;
-
-        temp_x = x_cordinate - 2*box_dimension;
-        temp_y = y_cordinate - box_dimension;
-    } 
-
-    float right_x = x_cordinate;
-    float right_y = y_cordinate - 2*box_dimension;
-    convex_cloud = getConvexHull(right_x,right_y,z_cordinate,7,0.5);
-    result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 7");
-        return current_node;
-    }else if(result == 1){
-        struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = right_x;
-        temp_node->y_cordinate = right_y;
-        temp_node->z_cordinate = z_cordinate;
-        temp_node->predecessor = current_node;
-        temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(right_x,right_y,z_cordinate)){
-            if(found_nodes.getValue(right_x,right_y,z_cordinate)->path_cost>temp_node->path_cost){
-                node_queue.push(temp_node);
-            }
-        }else{
-            found_nodes.setValue(right_x,right_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
-        }
-    }else{
-        float temp_x = x_cordinate;
-        float temp_y = y_cordinate - box_dimension;
-
-        temp_x = x_cordinate - box_dimension;
-        temp_y = y_cordinate - 2*box_dimension;
-
-        temp_x = x_cordinate + box_dimension;
-        temp_y = y_cordinate - 2*box_dimension;
-    }
-
-    float front_left_x = x_cordinate + 2*box_dimension;
-    float front_left_y = y_cordinate + 2*box_dimension;
+    float front_left_x = x_cordinate + box_dimension;
+    float front_left_y = y_cordinate + box_dimension;
    
     convex_cloud = getConvexHull(front_left_x,front_left_y,z_cordinate,2,0.5);
     result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 2");
-        return current_node;
-    }else if(result == 1){
+    if(!found_nodes->hasValue(front_left_x,front_left_y,z_cordinate)){
+        if(result == -1){
+            ROS_INFO("Return on 2");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = front_left_x;
+            temp_node->y_cordinate = front_left_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(front_left_x,front_left_y,z_cordinate)){
+                if(found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost>temp_node->path_cost){
+                    found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{
+                found_nodes->setValue(front_left_x,front_left_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+            }
+        }
+    }else{
         struct Graph_Node *temp_node = new Graph_Node;
         temp_node->x_cordinate = front_left_x;
         temp_node->y_cordinate = front_left_y;
         temp_node->z_cordinate = z_cordinate;
         temp_node->predecessor = current_node;
         temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(front_left_x,front_left_y,z_cordinate)){
-            if(found_nodes.getValue(front_left_x,front_left_y,z_cordinate)->path_cost>temp_node->path_cost){
-                node_queue.push(temp_node);
-            }
-        }else{
-            found_nodes.setValue(front_left_x,front_left_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
+        if(found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost>temp_node->path_cost){
+            found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->predecessor = current_node;
+            found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost = temp_node->path_cost;
         }
-    }else{
-        float temp_x = x_cordinate + 2*box_dimension;
-        float temp_y = y_cordinate + box_dimension;
-
-        // temp_x = x_cordinate + 3*box_dimension;
-        // temp_y = y_cordinate + 2*box_dimension;
-
-        temp_x = x_cordinate + box_dimension;
-        temp_y = y_cordinate + 2*box_dimension;
     }      
 
-    float back_left_x = x_cordinate - 2*box_dimension;
-    float back_left_y = y_cordinate + 2*box_dimension;
-    convex_cloud = getConvexHull(back_left_x,back_left_y,z_cordinate,4,0.5);
-    result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 4");
-        return current_node;
-    }else if(result == 1){
+    float left_x = x_cordinate;
+    float left_y = y_cordinate + box_dimension;
+    if(!found_nodes->hasValue(left_x,left_y,z_cordinate)){
+        convex_cloud = getConvexHull(left_x,left_y,z_cordinate,3,0.5);
+        result = groundNonGroundExtraction(convex_cloud);
+        if(result == -1){
+            ROS_INFO("Return on 3");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = left_x;
+            temp_node->y_cordinate = left_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(left_x,left_y,z_cordinate)){
+                if(found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost>temp_node->path_cost){
+                    found_nodes->getValue(left_x,left_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{
+                found_nodes->setValue(left_x,left_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+            }
+        } 
+    }else{
+        struct Graph_Node *temp_node = new Graph_Node;
+        temp_node->x_cordinate = left_x;
+        temp_node->y_cordinate = left_y;
+        temp_node->z_cordinate = z_cordinate;
+        temp_node->predecessor = current_node;
+        temp_node->path_cost = current_node->path_cost+1;
+        if(found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost>temp_node->path_cost){
+            found_nodes->getValue(left_x,left_y,z_cordinate)->predecessor = current_node;
+            found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost = temp_node->path_cost;
+        }
+    }
+
+    float back_left_x = x_cordinate - box_dimension;
+    float back_left_y = y_cordinate + box_dimension;
+    if(!found_nodes->hasValue(back_left_x,back_left_y,z_cordinate)){
+        convex_cloud = getConvexHull(back_left_x,back_left_y,z_cordinate,4,0.5);
+        result = groundNonGroundExtraction(convex_cloud);
+        if(result == -1){
+            ROS_INFO("Return on 4");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = back_left_x;
+            temp_node->y_cordinate = back_left_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(back_left_x,back_left_y,z_cordinate)){
+                if(found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost>temp_node->path_cost){
+                    found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{
+                found_nodes->setValue(back_left_x,back_left_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+            }
+        } 
+    }else{
         struct Graph_Node *temp_node = new Graph_Node;
         temp_node->x_cordinate = back_left_x;
         temp_node->y_cordinate = back_left_y;
         temp_node->z_cordinate = z_cordinate;
         temp_node->predecessor = current_node;
         temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(back_left_x,back_left_y,z_cordinate)){
-            if(found_nodes.getValue(back_left_x,back_left_y,z_cordinate)->path_cost>temp_node->path_cost){
+        if(found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost>temp_node->path_cost){
+            found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->predecessor = current_node;
+            found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost = temp_node->path_cost;
+        }
+    }
+
+    float back_x = x_cordinate - box_dimension;
+    float back_y = y_cordinate;
+    if(!found_nodes->hasValue(back_x,back_y,z_cordinate)){
+        convex_cloud = getConvexHull(back_x,back_y,z_cordinate,5,0.5);
+        result = groundNonGroundExtraction(convex_cloud);
+        if(result == -1){
+            ROS_INFO("Return on 5");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = back_x;
+            temp_node->y_cordinate = back_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(back_x,back_y,z_cordinate)){
+                if(found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost>temp_node->path_cost){
+                found_nodes->getValue(back_x,back_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{
+                struct Graph_Node *temp_node = new Graph_Node;
+                temp_node->x_cordinate = back_x;
+                temp_node->y_cordinate = back_y;
+                temp_node->z_cordinate = z_cordinate;
+                temp_node->predecessor = current_node;
+                temp_node->path_cost = current_node->path_cost+1;
+                found_nodes->setValue(back_x,back_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
             }
-        }else{
-            found_nodes.setValue(back_left_x,back_left_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
-        }
+        } 
     }else{
-        float temp_x = x_cordinate - 2*box_dimension;
-        float temp_y = y_cordinate + box_dimension;
+        struct Graph_Node *temp_node = new Graph_Node;
+        temp_node->x_cordinate = back_x;
+        temp_node->y_cordinate = back_y;
+        temp_node->z_cordinate = z_cordinate;
+        temp_node->predecessor = current_node;
+        temp_node->path_cost = current_node->path_cost+1;
+        if(found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost>temp_node->path_cost){
+            found_nodes->getValue(back_x,back_y,z_cordinate)->predecessor = current_node;
+            found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost = temp_node->path_cost;
+        }
+    }
 
-        temp_x = x_cordinate - box_dimension;
-        temp_y = y_cordinate + 2*box_dimension;
-
-        // temp_x = x_cordinate - 3*box_dimension;
-        // temp_y = y_cordinate + 2*box_dimension;
-    } 
-
-    float back_right_x = x_cordinate - 2*box_dimension;
-    float back_right_y = y_cordinate - 2*box_dimension;
-    convex_cloud = getConvexHull(back_right_x,back_right_y,z_cordinate,6,0.5);
-    result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 6");
-        return current_node;
-    }else if(result == 1){
+    float back_right_x = x_cordinate - box_dimension;
+    float back_right_y = y_cordinate - box_dimension;
+    if(!found_nodes->hasValue(back_right_x,back_right_y,z_cordinate)){
+        convex_cloud = getConvexHull(back_right_x,back_right_y,z_cordinate,6,0.5);
+        result = groundNonGroundExtraction(convex_cloud);
+        if(result == -1){
+            ROS_INFO("Return on 6");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = back_right_x;
+            temp_node->y_cordinate = back_right_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(back_right_x,back_right_y,z_cordinate)){
+                if(found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+                    found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{                found_nodes->setValue(back_right_x,back_right_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+            }
+        } 
+    }else{
         struct Graph_Node *temp_node = new Graph_Node;
         temp_node->x_cordinate = back_right_x;
         temp_node->y_cordinate = back_right_y;
         temp_node->z_cordinate = z_cordinate;
         temp_node->predecessor = current_node;
         temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(back_right_x,back_right_y,z_cordinate)){
-            if(found_nodes.getValue(back_right_x,back_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+        if(found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+            found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->predecessor = current_node;
+            found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost = temp_node->path_cost;
+        }
+    }
+
+    float right_x = x_cordinate;
+    float right_y = y_cordinate - box_dimension;
+    if(!found_nodes->hasValue(right_x,right_y,z_cordinate)){
+        convex_cloud = getConvexHull(right_x,right_y,z_cordinate,7,0.5);
+        result = groundNonGroundExtraction(convex_cloud);
+        if(result == -1){
+            ROS_INFO("Return on 7");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = right_x;
+            temp_node->y_cordinate = right_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(right_x,right_y,z_cordinate)){
+                if(found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost>temp_node->path_cost){
+                    found_nodes->getValue(right_x,right_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{
+                found_nodes->setValue(right_x,right_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
             }
-        }else{
-            found_nodes.setValue(back_right_x,back_right_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
-        }
+        } 
     }else{
-        float temp_x = x_cordinate - box_dimension;
-        float temp_y = y_cordinate - 2*box_dimension;
-
-        temp_x = x_cordinate - box_dimension;
-        temp_y = y_cordinate - 2*box_dimension;
-
-        // temp_x = x_cordinate - 3*box_dimension;
-        // temp_y = y_cordinate - 2*box_dimension;
-    } 
-
-    float front_right_x = x_cordinate + 2*box_dimension;
-    float front_right_y = y_cordinate - 2*box_dimension;
-    convex_cloud = getConvexHull(front_left_x,front_right_y,z_cordinate,8,0.5);
-    result = groundNonGroundExtraction(convex_cloud);
-    if(result == -1){
-        ROS_INFO("Return on 8");
-        return current_node;
-    }else if(result == 1){
         struct Graph_Node *temp_node = new Graph_Node;
-        temp_node->x_cordinate = front_right_x;
-        temp_node->y_cordinate = front_right_y;
+        temp_node->x_cordinate = right_x;
+        temp_node->y_cordinate = right_y;
         temp_node->z_cordinate = z_cordinate;
         temp_node->predecessor = current_node;
         temp_node->path_cost = current_node->path_cost+1;
-        if(found_nodes.hasValue(front_left_x,front_right_y,z_cordinate)){
-            if(found_nodes.getValue(front_left_x,front_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+        if(found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost>temp_node->path_cost){
+            found_nodes->getValue(right_x,right_y,z_cordinate)->predecessor = current_node;
+            found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost = temp_node->path_cost;
+        }
+    }
+
+    float front_right_x = x_cordinate + box_dimension;
+    float front_right_y = y_cordinate - box_dimension;
+    if(!found_nodes->hasValue(front_left_x,front_right_y,z_cordinate)){
+        convex_cloud = getConvexHull(front_left_x,front_right_y,z_cordinate,8,0.5);
+        result = groundNonGroundExtraction(convex_cloud);
+        if(result == -1){
+            ROS_INFO("Return on 8");
+            return current_node;
+        }else if(result == 1){
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = front_right_x;
+            temp_node->y_cordinate = front_right_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->hasValue(front_left_x,front_right_y,z_cordinate)){
+                if(found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+                    found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->predecessor = current_node;
+                    found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost = temp_node->path_cost;
+                }
+            }else{
+                found_nodes->setValue(front_left_x,front_right_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
             }
         }else{
-            found_nodes.setValue(front_left_x,front_right_y,z_cordinate,temp_node);
-            node_queue.push(temp_node);
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = front_right_x;
+            temp_node->y_cordinate = front_right_y;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            if(found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost>temp_node->path_cost){
+                found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->predecessor = current_node;
+                found_nodes->getValue(front_left_x,front_right_y,z_cordinate)->path_cost = temp_node->path_cost;
+            }
         }
-    }else{
-        float temp_x = x_cordinate + box_dimension;
-        float temp_y = y_cordinate - 2*box_dimension;
-
-        temp_x = x_cordinate + 2*box_dimension;
-        temp_y = y_cordinate - box_dimension;
-
-        // temp_x = x_cordinate + 3*box_dimension;
-        // temp_y = y_cordinate - 2*box_dimension;
-    }
+    } 
 
     if(node_queue.empty()){
         ROS_INFO("No Nodes to Traverse");
@@ -805,72 +850,80 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
     ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
 
     struct Graph_Node *temp_node = node;
-    // if (ros::ok()){
-    //     visualization_msgs::Marker points, line_strip, line_list;
-    //     points.header.frame_id = line_strip.header.frame_id = line_list.header.frame_id = "/odom";
-    //     points.header.stamp = line_strip.header.stamp = line_list.header.stamp = ros::Time::now();
-    //     points.ns = line_strip.ns = line_list.ns = "points_and_lines";
-    //     points.action = line_strip.action = line_list.action = visualization_msgs::Marker::ADD;
-    //     points.pose.orientation.w = line_strip.pose.orientation.w = line_list.pose.orientation.w = 1.0;
-
-    //     points.id = 0;
-    //     line_strip.id = 1;
-    //     line_list.id = 2;
-
-    //     points.type = visualization_msgs::Marker::POINTS;
-    //     line_strip.type = visualization_msgs::Marker::LINE_STRIP;
-    //     line_list.type = visualization_msgs::Marker::LINE_LIST;
-
-    //     points.scale.x = 0.2;
-    //     points.scale.y = 0.2;
-
-    //     line_strip.scale.x = 0.1;
-    //     line_list.scale.x = 0.1;
-
-    //     points.color.g = 1.0f;
-    //     points.color.a = 1.0;
-
-    //     line_strip.color.b = 1.0;
-    //     line_strip.color.a = 1.0;
-
-    //     line_list.color.r = 1.0;
-    //     line_list.color.a = 1.0;
-
-    struct Graph_Node *temp_node1 = temp_node;
+    int term = 0;
+    int count = 0;
     geometry_msgs::PoseStamped pose;
     std::vector<geometry_msgs::PoseStamped> plan;
+    while (ros::ok() && term!=1000){
+        visualization_msgs::Marker points, line_strip, line_list;
+        points.header.frame_id = line_strip.header.frame_id = line_list.header.frame_id = "/odom";
+        points.header.stamp = line_strip.header.stamp = line_list.header.stamp = ros::Time::now();
+        points.ns = line_strip.ns = line_list.ns = "points_and_lines";
+        points.action = line_strip.action = line_list.action = visualization_msgs::Marker::ADD;
+        points.pose.orientation.w = line_strip.pose.orientation.w = line_list.pose.orientation.w = 1.0;
 
-    while(temp_node1!=NULL){
-        ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->z_cordinate);
-        // geometry_msgs::Point p;
-        // p.x = temp_node1->x_cordinate;
-        // p.y = temp_node1->y_cordinate;
-        // p.z = temp_node1->z_cordinate;
-        // temp_node1 = temp_node1->predecessor;
-        // points.points.push_back(p);
-        // line_strip.points.push_back(p);
-        // line_list.points.push_back(p);
-        // p.z += 1.0;
-        // line_list.points.push_back(p);
-        pose.pose.position.x = temp_node1->x_cordinate;
-        pose.pose.position.y = temp_node1->y_cordinate;
-        pose.pose.position.z = temp_node1->z_cordinate;
-        pose.pose.orientation.x = 0.0;
-        pose.pose.orientation.y = 0.0;
-        pose.pose.orientation.z = 0.0;
-        pose.pose.orientation.w = 1.0;
-        plan.push_back(pose);
-        temp_node1 = temp_node1->predecessor;
-    }
+        points.id = 0;
+        line_strip.id = 1;
+        line_list.id = 2;
+
+        points.type = visualization_msgs::Marker::POINTS;
+        line_strip.type = visualization_msgs::Marker::LINE_STRIP;
+        line_list.type = visualization_msgs::Marker::LINE_LIST;
+
+        points.scale.x = 0.2;
+        points.scale.y = 0.2;
+
+        line_strip.scale.x = 0.1;
+        line_list.scale.x = 0.1;
+
+        points.color.g = 1.0f;
+        points.color.a = 1.0;
+
+        line_strip.color.b = 1.0;
+        line_strip.color.a = 1.0;
+
+        line_list.color.r = 1.0;
+        line_list.color.a = 1.0;
+
+        struct Graph_Node *temp_node1 = temp_node;
+        
+
+        while(temp_node1!=NULL){
+            ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->z_cordinate);
+            geometry_msgs::Point p;
+            p.x = temp_node1->x_cordinate;
+            p.y = temp_node1->y_cordinate;
+            p.z = temp_node1->z_cordinate;
+            // temp_node1 = temp_node1->predecessor;
+            points.points.push_back(p);
+            line_strip.points.push_back(p);
+            line_list.points.push_back(p);
+            p.z += 1.0;
+            line_list.points.push_back(p);
+            pose.pose.position.x = temp_node1->x_cordinate;
+            pose.pose.position.y = temp_node1->y_cordinate;
+            pose.pose.position.z = temp_node1->z_cordinate;
+            pose.pose.orientation.x = 0.0;
+            pose.pose.orientation.y = 0.0;
+            pose.pose.orientation.z = 0.0;
+            pose.pose.orientation.w = 1.0;
+            if(count == 0){
+                plan.push_back(pose);    
+            }
+            
+            temp_node1 = temp_node1->predecessor;
+        }
 
     // for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); it != plan.end (); ++it){
     
     // }
-    //marker_pub.publish(points);
-    //marker_pub.publish(line_strip);
-    //marker_pub.publish(line_list);
-    current_node=NULL;
-
+        marker_pub.publish(points);
+        marker_pub.publish(line_strip);
+        marker_pub.publish(line_list);
+        current_node=NULL;
+        term++;
+        count++;
+    }
     ROS_INFO("PATH PLANNED");
     return plan;
   
@@ -881,19 +934,15 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geom
     float y_cordinate = pose.pose.position.y;
     float z_cordinate = pose.pose.position.z;
     
-    if(found_nodes.hasValue(x_cordinate,y_cordinate,z_cordinate)){
-        current_node = found_nodes.getValue(x_cordinate,y_cordinate,z_cordinate);
-        current_node->path_cost = 0;
-        found_nodes.setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
-    }else{
-        current_node =  new Graph_Node;
-        current_node->x_cordinate = x_cordinate;
-        current_node->y_cordinate = y_cordinate;
-        current_node->z_cordinate = z_cordinate;
-        current_node->path_cost = 0;
-        current_node->predecessor = NULL;
-        found_nodes.setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
-    }
+    found_nodes = new Array3D<struct Graph_Node*>;
+    current_node =  new Graph_Node;
+    current_node->x_cordinate = x_cordinate;
+    current_node->y_cordinate = y_cordinate;
+    current_node->z_cordinate = z_cordinate;
+    current_node->path_cost = 0;
+    current_node->predecessor = NULL;
+    found_nodes->setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
+
     
     struct Graph_Node *node = breadthFirstSearch(x_cordinate,y_cordinate,z_cordinate);
     return publishPath(node);
@@ -904,10 +953,10 @@ void NavigationPlanner::startTraversal(const geometry_msgs::PoseStamped& pose){
     float y_cordinate = pose.pose.position.y;
     float z_cordinate = pose.pose.position.z;
     
-    if(found_nodes.hasValue(x_cordinate,y_cordinate,z_cordinate)){
-        current_node = found_nodes.getValue(x_cordinate,y_cordinate,z_cordinate);
+    if(found_nodes->hasValue(x_cordinate,y_cordinate,z_cordinate)){
+        current_node = found_nodes->getValue(x_cordinate,y_cordinate,z_cordinate);
         current_node->path_cost = 0;
-        found_nodes.setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
+        found_nodes->setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
     }else{
         current_node =  new Graph_Node;
         current_node->x_cordinate = x_cordinate;
@@ -915,7 +964,7 @@ void NavigationPlanner::startTraversal(const geometry_msgs::PoseStamped& pose){
         current_node->z_cordinate = z_cordinate;
         current_node->path_cost = 0;
         current_node->predecessor = NULL;
-        found_nodes.setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
+        found_nodes->setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
     }
     
     ROS_INFO("Start Node X %f , Y %f , Z %f",x_cordinate, y_cordinate, z_cordinate);

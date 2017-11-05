@@ -306,8 +306,8 @@ namespace swarm_navigator {
         
     
 
-        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end (); 
-                                it != plan.begin (); --it){
+        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); 
+                                it != plan.end (); ++it){
             achieveGoal(*it);  
         }
 
