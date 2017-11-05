@@ -308,7 +308,8 @@ namespace swarm_navigator {
 
         for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); 
                                 it != plan.end (); ++it){
-            achieveGoal(*it);  
+            ROS_INFO("cordinates %f %f %f",(*it).pose.position.x,(*it).pose.position.y,(*it).pose.position.z);
+            //achieveGoal(*it);  
         }
 
         return true;
