@@ -518,7 +518,7 @@ NavigationPlanner::~NavigationPlanner(){}
 
 struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, float y_cordinate, float z_cordinate){
 
-    float box_dimension = 1.0; // half of robot length
+    float box_dimension = 0.5; // half of robot length
     pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
 
     int result;
