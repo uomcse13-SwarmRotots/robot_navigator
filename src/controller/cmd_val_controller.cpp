@@ -161,8 +161,7 @@ namespace swarm_navigator {
         
         ros::Rate rate(10.0);
         bool done = false;
-        while (!done && nh_.ok())
-        {
+        while (!done && nh_.ok()){
             //send the drive command
             publisher_.publish(base_cmd);
             rate.sleep();
@@ -243,7 +242,7 @@ namespace swarm_navigator {
         // //record the starting transform from the odometry to the base frame
         // listener_.lookupTransform(base_link_, odom_link_, 
         //                             ros::Time::now(), robot_transform);
-
+        ROS_INFO("Goal came...");
         tf::Stamped<tf::Pose> global_pose;
         getRobotPose(global_pose);
         geometry_msgs::PoseStamped current_position;
@@ -292,7 +291,7 @@ namespace swarm_navigator {
             yaw_goal_robot_diff*=-1;
             clockwise = true;
         }
-           
+        ROS_INFO("angle: [%f]", yaw_goal_robot_diff);
         turn(clockwise,yaw_goal_robot_diff);
         double distance = hypot(current_position.pose.position.x - goal.pose.position.x
                     , current_position.pose.position.y - goal.pose.position.y);
@@ -304,15 +303,11 @@ namespace swarm_navigator {
     }
 
     bool CmdValController::followPath(const std::vector<geometry_msgs::PoseStamped>& plan){
-        
     
-
-        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); 
-                                it != plan.end (); ++it){
-            ROS_INFO("%d",(*it).pose.position.x);
-            ROS_INFO("%d",(*it).pose.position.y);
-            achieveGoal(*it);  
-            //ros::Duration(0.2).sleep();
+        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end ()-1; 
+                                it != plan.begin (); --it){
+            ROS_INFO("cordinates %f %f %f",(*it).pose.position.x,(*it).pose.position.y,(*it).pose.position.z);
+            // achieveGoal(*it);  
         }
 
         return true;

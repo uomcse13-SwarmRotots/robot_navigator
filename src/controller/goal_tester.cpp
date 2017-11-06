@@ -99,7 +99,7 @@ void callback(const geometry_msgs::PoseStamped& goal)
     pose.pose.orientation.w = 1.0;
     plan.push_back(pose);
 
-
+    ROS_INFO("Done planning....");
     controller->followPath(plan);
 
     //controller->achieveGoal(goal);
