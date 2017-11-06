@@ -298,7 +298,7 @@ namespace swarm_navigator {
                     , current_position.pose.position.y - goal.pose.position.y);
         ROS_INFO("distance: [%f]", distance);
         driveForward(distance);        
-        turn(true,2*M_PI);
+        //turn(true,2*M_PI);
 
         return true;
     }
@@ -309,7 +309,10 @@ namespace swarm_navigator {
 
         for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); 
                                 it != plan.end (); ++it){
+            ROS_INFO("%d",(*it).pose.position.x);
+            ROS_INFO("%d",(*it).pose.position.y);
             achieveGoal(*it);  
+            //ros::Duration(0.2).sleep();
         }
 
         return true;

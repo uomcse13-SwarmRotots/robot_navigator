@@ -39,11 +39,70 @@ void callback(const geometry_msgs::PoseStamped& goal)
     tf::Stamped<tf::Pose> global_pose;
     controller->getRobotPose(global_pose);
     geometry_msgs::PoseStamped current_position;
+
     tf::poseStampedTFToMsg(global_pose, current_position);
-    std::vector<geometry_msgs::PoseStamped> plan = 
-                    navigation_planner->getNavPlan(current_position);
+    // std::vector<geometry_msgs::PoseStamped> plan = 
+    //                 navigation_planner->getNavPlan(current_position);
+    std::vector<geometry_msgs::PoseStamped> plan;
+    geometry_msgs::PoseStamped pose;
+    pose.pose.position.x = current_position.pose.position.x+0.5;
+    pose.pose.position.y = current_position.pose.position.y;
+    pose.pose.position.z = current_position.pose.position.z;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 1.0;
+    plan.push_back(pose);
+
+    pose.pose.position.x = current_position.pose.position.x+1.0;
+    pose.pose.position.y = current_position.pose.position.y;
+    pose.pose.position.z = current_position.pose.position.z;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 1.0;
+    plan.push_back(pose);
+
+    pose.pose.position.x = current_position.pose.position.x+1.0;
+    pose.pose.position.y = current_position.pose.position.y+0.5;
+    pose.pose.position.z = current_position.pose.position.z;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 1.0;
+    plan.push_back(pose);
+
+    pose.pose.position.x = current_position.pose.position.x+0.5;
+    pose.pose.position.y = current_position.pose.position.y+0.5;
+    pose.pose.position.z = current_position.pose.position.z;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 1.0;
+    plan.push_back(pose);
+
+    pose.pose.position.x = current_position.pose.position.x+0.5;
+    pose.pose.position.y = current_position.pose.position.y;
+    pose.pose.position.z = current_position.pose.position.z;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 1.0;
+    plan.push_back(pose);
+
+    pose.pose.position.x = current_position.pose.position.x+0.5;
+    pose.pose.position.y = current_position.pose.position.y-0.5;
+    pose.pose.position.z = current_position.pose.position.z;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 1.0;
+    plan.push_back(pose);
+
+
     controller->followPath(plan);
-   
+
+    //controller->achieveGoal(goal);
     
 }
 
@@ -60,7 +119,7 @@ int main(int argc, char** argv)
     std::string topic_octomap;
 
     ros::NodeHandle private_nh("~");     
-    private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/mobile_base/commands/velocity")); 
+    private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/cmd_vel")); 
     private_nh.param("odom_topic", topic_odom, std::string("/odom")); 
     private_nh.param("base_link", base_link, std::string("base_footprint")); 
     private_nh.param("odom_link", odom_link, std::string("odom")); 
