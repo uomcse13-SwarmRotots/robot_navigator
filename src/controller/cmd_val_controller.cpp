@@ -243,6 +243,11 @@ namespace swarm_navigator {
         // listener_.lookupTransform(base_link_, odom_link_, 
         //                             ros::Time::now(), robot_transform);
         ROS_INFO("Goal came...");
+        ROS_INFO("Goal:(x,y,z) - ([%f],[%f],[%f])", 
+                                goal.pose.position.x,
+                                goal.pose.position.y,
+                                goal.pose.position.z);
+
         tf::Stamped<tf::Pose> global_pose;
         getRobotPose(global_pose);
         geometry_msgs::PoseStamped current_position;
@@ -307,7 +312,8 @@ namespace swarm_navigator {
         for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end ()-1; 
                                 it != plan.begin (); --it){
             ROS_INFO("cordinates %f %f %f",(*it).pose.position.x,(*it).pose.position.y,(*it).pose.position.z);
-            // achieveGoal(*it);  
+            achieveGoal(*it); 
+            ros::Duration(0.5).sleep(); 
         }
 
         return true;
