@@ -412,7 +412,7 @@ void NavigationPlanner::clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& obje
 
 
 int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube){
-    
+    ROS_INFO("Reached");
     pcl::PointIndicesPtr ground (new pcl::PointIndices);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
 
