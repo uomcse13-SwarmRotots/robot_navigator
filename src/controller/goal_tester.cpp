@@ -72,20 +72,7 @@ void callback(const geometry_msgs::PoseStamped& goal)
     // push(1.204518,-1.459254,plan);
     // push(0.704518,-1.959254,plan);
     // push(0.204518,-2.459254,plan);
-    // push(-0.295482,-2.959254,plan);
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    // push(-0.295482,-2.959254,plan);   
     
     // push(0204518,3540746,(*plan));
     // push(0204518,3540746,(*plan));
