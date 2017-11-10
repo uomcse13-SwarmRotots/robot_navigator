@@ -1,7 +1,6 @@
 #include <controller/cmd_val_controller.h>
 #include <iostream>
 
-
 namespace swarm_navigator {
 
     CmdValController::CmdValController(ros::NodeHandle &nh,std::string topic,std::string base_link,std::string odom_link){
@@ -308,7 +307,6 @@ namespace swarm_navigator {
     }
 
     bool CmdValController::followPath(const std::vector<geometry_msgs::PoseStamped>& plan){
-    
         for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end ()-1; 
                                 it != plan.begin (); --it){
             ROS_INFO("cordinates %f %f %f",(*it).pose.position.x,(*it).pose.position.y,(*it).pose.position.z);

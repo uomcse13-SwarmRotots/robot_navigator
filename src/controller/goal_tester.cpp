@@ -165,7 +165,7 @@ int main(int argc, char** argv)
     // TimeSynchronizer<nav_msgs::Odometry, sensor_msgs::PointCloud2> sync(odom_sub, points_sub, 10);
     // sync.registerCallback(boost::bind(&callback, _1, _2));
 
-  
+
     navigation_planner = new NavigationPlanner(nh,topic_octomap);
     navigation_planner->start();
 
@@ -178,3 +178,5 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+

@@ -299,7 +299,6 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr NavigationPlanner::getConvexHull(float x_cor
 
 }
 
-
 void NavigationPlanner::planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud){
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -409,10 +408,8 @@ void NavigationPlanner::clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& obje
     }
 }
 
-
-
 int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube){
-    
+    ROS_INFO("Reached");
     pcl::PointIndicesPtr ground (new pcl::PointIndices);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
 
@@ -931,6 +928,7 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
 }
 
 std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geometry_msgs::PoseStamped& pose){
+    ROS_INFO("1");
     float x_cordinate = pose.pose.position.x;
     float y_cordinate = pose.pose.position.y;
     float z_cordinate = pose.pose.position.z;
@@ -943,9 +941,10 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geom
     current_node->path_cost = 0;
     current_node->predecessor = NULL;
     found_nodes->setValue(x_cordinate,y_cordinate,z_cordinate,current_node);
-
+    ROS_INFO("2");
     
     struct Graph_Node *node = breadthFirstSearch(x_cordinate,y_cordinate,z_cordinate);
+    ROS_INFO("3");
     return publishPath(node);
 }
 
