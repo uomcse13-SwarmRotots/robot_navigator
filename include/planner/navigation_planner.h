@@ -160,6 +160,7 @@ class NavigationPlanner{
         struct Graph_Node *breadth_array_free_cells[1000];
 
         Array3D<struct Graph_Node*>* found_nodes;
+        Array3D<struct Graph_Node*>* found_obstacles;
         Array3D<float> occupied_points;
         Array3D<float> checked_points;
         
