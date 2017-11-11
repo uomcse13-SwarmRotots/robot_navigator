@@ -196,6 +196,7 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
 add_library(navigation_planner src/planner/navigation_planner.cpp)
+add_library(path_visualizer src/support/path_visualizer.cpp)
 #add_executable(map_merger src/merger/map_merger.cpp)
 
 add_library(cmd_val_controller  src/controller/cmd_val_controller.cpp)
@@ -218,6 +219,7 @@ target_link_libraries(goal_tester
     ${catkin_LIBRARIES}
     cmd_val_controller
     navigation_planner
+    path_visualizer
 )
 
 add_executable(merger_exec src/merger/merger_exec.cpp)
