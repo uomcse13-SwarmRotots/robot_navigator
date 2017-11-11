@@ -864,83 +864,25 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
 std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Graph_Node *node){
     ros::NodeHandle n;
     ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
-
     struct Graph_Node *temp_node = node;
-    int term = 0;
-    int count = 0;
     geometry_msgs::PoseStamped pose;
     std::vector<geometry_msgs::PoseStamped> plan;
-    while (ros::ok() && term!=3000){
-        visualization_msgs::Marker points, line_strip, line_list;
-        points.header.frame_id = line_strip.header.frame_id = line_list.header.frame_id = "/odom";
-        points.header.stamp = line_strip.header.stamp = line_list.header.stamp = ros::Time::now();
-        points.ns = line_strip.ns = line_list.ns = "points_and_lines";
-        points.action = line_strip.action = line_list.action = visualization_msgs::Marker::ADD;
-        points.pose.orientation.w = line_strip.pose.orientation.w = line_list.pose.orientation.w = 0.5;
-
-        points.id = 0;
-        line_strip.id = 1;
-        line_list.id = 2;
-
-        points.type = visualization_msgs::Marker::POINTS;
-        line_strip.type = visualization_msgs::Marker::LINE_STRIP;
-        line_list.type = visualization_msgs::Marker::LINE_LIST;
-
-        points.scale.x = 0.2;
-        points.scale.y = 0.2;
-
-        line_strip.scale.x = 0.1;
-        line_list.scale.x = 0.1;
-
-        points.color.g = 0.5f;
-        points.color.a = 0.5;
-
-        line_strip.color.b = 0.5;
-        line_strip.color.a = 0.5;
-
-        line_list.color.r = 0.5;
-        line_list.color.a = 0.5;
-
-        struct Graph_Node *temp_node1 = temp_node;
-        
-
-        while(temp_node1!=NULL){
-            
-            geometry_msgs::Point p;
-            p.x = temp_node1->x_cordinate;
-            p.y = temp_node1->y_cordinate;
-            p.z = temp_node1->z_cordinate;
-            // temp_node1 = temp_node1->predecessor;
-            points.points.push_back(p);
-            line_strip.points.push_back(p);
-            line_list.points.push_back(p);
-            p.z += 0.5;
-            line_list.points.push_back(p);
-            pose.pose.position.x = temp_node1->x_cordinate;
-            pose.pose.position.y = temp_node1->y_cordinate;
-            pose.pose.position.z = temp_node1->z_cordinate;
-            pose.pose.orientation.x = 0.0;
-            pose.pose.orientation.y = 0.0;
-            pose.pose.orientation.z = 0.0;
-            pose.pose.orientation.w = 0.5;
-            if(count == 0){
-                ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->z_cordinate);
-                plan.push_back(pose);    
-            }
-            temp_node1 = temp_node1->predecessor;
-        }
-
-    // for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.begin (); it != plan.end (); ++it){
+    struct Graph_Node *temp_node1 = temp_node;
     
-    // }
-        marker_pub.publish(points);
-        marker_pub.publish(line_strip);
-        marker_pub.publish(line_list);
-        current_node=NULL;
-        term++;
-        count++;
+    while(temp_node1!=NULL){
+
+        pose.pose.position.x = temp_node1->x_cordinate;
+        pose.pose.position.y = temp_node1->y_cordinate;
+        pose.pose.position.z = temp_node1->z_cordinate;
+        pose.pose.orientation.x = 0.0;
+        pose.pose.orientation.y = 0.0;
+        pose.pose.orientation.z = 0.0;
+        pose.pose.orientation.w = 0.0;
+        ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->z_cordinate);
+        plan.push_back(pose);    
+        temp_node1 = temp_node1->predecessor;
     }
-    term=0;
+    current_node=NULL;
     ROS_INFO("PATH PLANNED");
     return plan;
   
