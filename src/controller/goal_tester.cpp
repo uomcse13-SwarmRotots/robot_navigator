@@ -14,6 +14,7 @@ using namespace message_filters;
 swarm_navigator::CmdValController* controller;
 NavigationPlanner* navigation_planner;
 ros::Publisher vis_pub;
+std::vector<geometry_msgs::PoseStamped> point_array;
 
 
 void push(double x,double y,std::vector<geometry_msgs::PoseStamped>& plan){
@@ -55,6 +56,7 @@ visualization_msgs::Marker publishMarker(const geometry_msgs::PoseStamped& pose)
     vis_pub.publish( marker );
 
 }
+
 
 void showPath(std::vector<geometry_msgs::PoseStamped>& plan,ros::Publisher& publisher){
     
@@ -113,7 +115,15 @@ void showPath(std::vector<geometry_msgs::PoseStamped>& plan,ros::Publisher& publ
 
     publisher.publish(points);
     publisher.publish(line_strip);
-    // publisher.publish(line_list);
+    publisher.publish(line_list);
+
+}
+
+void showPoints(const geometry_msgs::PoseStamped& pose,std::vector<geometry_msgs::PoseStamped>& array
+    ,ros::Publisher& publisher){
+
+        array.push_back(pose);
+        showPath(array,publisher);
 
 }
 
@@ -230,6 +240,10 @@ void callback(const geometry_msgs::PoseStamped& goal)
     
 }
 
+void testcallback(const geometry_msgs::PoseStamped& goal){
+    showPoints(goal,point_array,vis_pub);
+    
+}
 
 int main(int argc, char** argv)
 {
@@ -262,7 +276,7 @@ int main(int argc, char** argv)
     navigation_planner->start();
 
     ros::NodeHandle simple_nh("move_base_simple");
-    ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, callback);
+    ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, testcallback);
 
 
     // ros::Subscriber goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1);
