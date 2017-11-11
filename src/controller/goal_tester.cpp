@@ -181,8 +181,8 @@ int main(int argc, char** argv)
     navigation_planner->start();
 
     ros::NodeHandle simple_nh("move_base_simple");
-    ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, testcallback);
-
+    ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, callback);
+// 
 
     // ros::Subscriber goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1);
     ros::spin();
