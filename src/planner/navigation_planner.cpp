@@ -554,6 +554,7 @@ NavigationPlanner::NavigationPlanner(ros::NodeHandle &nh, std::string topic){
 NavigationPlanner::~NavigationPlanner(){}
 
 
+
 struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, float y_cordinate, float z_cordinate){
 
     float box_dimension = 0.5; // half of robot length
@@ -896,6 +897,16 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
     ROS_INFO("PATH PLANNED");
     return plan;
   
+}
+
+void NavigationPlanner::getFrontPlane(const geometry_msgs::PoseStamped& pose){
+    float x_cordinate = pose.pose.position.x+0.5;
+    float y_cordinate = pose.pose.position.y;
+    float z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
+    convex_cloud = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
+    int result = groundNonGroundExtraction(convex_cloud);
+    ROS_INFO("%d",result);
 }
 
 std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geometry_msgs::PoseStamped& pose){

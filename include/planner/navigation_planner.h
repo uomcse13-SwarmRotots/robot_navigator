@@ -219,6 +219,7 @@ class NavigationPlanner{
         void startTraversal(const geometry_msgs::PoseStamped& pose);
         std::vector<geometry_msgs::PoseStamped> getNavPlan(const geometry_msgs::PoseStamped& pose);
         void cloudCallback(const PointCloud::ConstPtr& msg);
+        void getFrontPlane(const geometry_msgs::PoseStamped& pose);
         ~NavigationPlanner();
 };
 #endif
