@@ -582,12 +582,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1;
-            if(found_nodes->hasValue(front_x,front_y,z_cordinate)){
-                if(found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost>temp_node->path_cost){
-                    found_nodes->getValue(front_x,front_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(front_x,front_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{
+            {
                 found_nodes->setValue(front_x,front_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",front_x,front_y,z_cordinate);
@@ -624,12 +619,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
-            if(found_nodes->hasValue(front_left_x,front_left_y,z_cordinate)){
-                if(found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost>temp_node->path_cost){
-                    found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(front_left_x,front_left_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{
+            {
                 found_nodes->setValue(front_left_x,front_left_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",front_left_x,front_left_y,z_cordinate);
@@ -663,13 +653,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->y_cordinate = left_y;
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
-            temp_node->path_cost = current_node->path_cost+1;
-            if(found_nodes->hasValue(left_x,left_y,z_cordinate)){
-                if(found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost>temp_node->path_cost){
-                    found_nodes->getValue(left_x,left_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(left_x,left_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{
+            {
                 found_nodes->setValue(left_x,left_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",left_x,left_y,z_cordinate);
@@ -704,12 +688,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
-            if(found_nodes->hasValue(back_left_x,back_left_y,z_cordinate)){
-                if(found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost>temp_node->path_cost){
-                    found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(back_left_x,back_left_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{
+            {
                 found_nodes->setValue(back_left_x,back_left_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",back_left_x,back_left_y,z_cordinate);
@@ -744,12 +723,8 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1;
-            if(found_nodes->hasValue(back_x,back_y,z_cordinate)){
-                if(found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost>temp_node->path_cost){
-                found_nodes->getValue(back_x,back_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(back_x,back_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{
+            
+            {
                 found_nodes->setValue(back_x,back_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",back_x,back_y,z_cordinate);
@@ -784,12 +759,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
-            if(found_nodes->hasValue(back_right_x,back_right_y,z_cordinate)){
-                if(found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost>temp_node->path_cost){
-                    found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(back_right_x,back_right_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{                
+            {                
                 found_nodes->setValue(back_right_x,back_right_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",back_right_x,back_right_y,z_cordinate);
@@ -824,12 +794,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1;
-            if(found_nodes->hasValue(right_x,right_y,z_cordinate)){
-                if(found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost>temp_node->path_cost){
-                    found_nodes->getValue(right_x,right_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(right_x,right_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{
+            {
                 found_nodes->setValue(right_x,right_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",right_x,right_y,z_cordinate);
@@ -864,12 +829,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
             temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
-            if(found_nodes->hasValue(front_right_x,front_right_y,z_cordinate)){
-                if(found_nodes->getValue(front_right_x,front_right_y,z_cordinate)->path_cost>temp_node->path_cost){
-                    found_nodes->getValue(front_right_x,front_right_y,z_cordinate)->predecessor = current_node;
-                    found_nodes->getValue(front_right_x,front_right_y,z_cordinate)->path_cost = temp_node->path_cost;
-                }
-            }else{
+            {
                 found_nodes->setValue(front_right_x,front_right_y,z_cordinate,temp_node);
                 node_queue.push(temp_node);
                 ROS_INFO("%f %f %f",front_right_x,front_right_y,z_cordinate);
@@ -991,7 +951,6 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geom
     float x_cordinate = pose.pose.position.x;
     float y_cordinate = pose.pose.position.y;
     float z_cordinate = pose.pose.position.z;
-    groundNonGroundExtraction(cloud);
     found_nodes = new Array3D<struct Graph_Node*>;
     current_node =  new Graph_Node;
     current_node->x_cordinate = x_cordinate;
