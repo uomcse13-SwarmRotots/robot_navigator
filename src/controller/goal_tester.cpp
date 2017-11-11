@@ -13,6 +13,7 @@ using namespace message_filters;
 
 swarm_navigator::CmdValController* controller;
 NavigationPlanner* navigation_planner;
+ros::Publisher vis_pub;
 
 
 void push(double x,double y,std::vector<geometry_msgs::PoseStamped>& plan){
@@ -25,6 +26,95 @@ void push(double x,double y,std::vector<geometry_msgs::PoseStamped>& plan){
     pose.pose.orientation.z = 0.0;
     pose.pose.orientation.w = 1.0;
     plan.push_back(pose);
+}
+
+visualization_msgs::Marker publishMarker(const geometry_msgs::PoseStamped& pose){
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "base_link";
+    marker.header.stamp = ros::Time();
+    marker.ns = "my_namespace";
+    marker.id = 0;
+    marker.type = visualization_msgs::Marker::LINE_STRIP;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = pose.pose.position.x;
+    marker.pose.position.y = pose.pose.position.y;
+    marker.pose.position.z = pose.pose.position.z;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    marker.scale.x = 0.1;
+    marker.scale.y = 0.1;
+    marker.scale.z = 0.1;
+    marker.color.a = 1.0; // Don't forget to set the alpha!
+    marker.color.r = 0.0;
+    marker.color.g = 1.0;
+    marker.color.b = 0.0;
+    //only if using a MESH_RESOURCE marker type:
+    marker.mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
+    vis_pub.publish( marker );
+
+}
+
+void showPath(std::vector<geometry_msgs::PoseStamped>& plan,ros::Publisher& publisher){
+    
+    visualization_msgs::Marker points, line_strip, line_list;
+    points.header.frame_id = line_strip.header.frame_id = line_list.header.frame_id = "/odom";
+    points.header.stamp = line_strip.header.stamp = line_list.header.stamp = ros::Time::now();
+    points.ns = line_strip.ns = line_list.ns = "points_and_lines";
+    points.action = line_strip.action = line_list.action = visualization_msgs::Marker::ADD;
+    points.pose.orientation.w = line_strip.pose.orientation.w = line_list.pose.orientation.w = 1.0;
+
+    points.id = 0;
+    line_strip.id = 1;
+    line_list.id = 2;
+
+    points.type = visualization_msgs::Marker::POINTS;
+    line_strip.type = visualization_msgs::Marker::LINE_STRIP;
+    line_list.type = visualization_msgs::Marker::LINE_LIST;
+
+    // POINTS markers use x and y scale for width/height respectively
+    points.scale.x = 0.2;
+    points.scale.y = 0.2;
+
+    // LINE_STRIP/LINE_LIST markers use only the x component of scale, for the line width
+    line_strip.scale.x = 0.1;
+    line_list.scale.x = 0.1;
+
+    // Points are green
+    points.color.g = 1.0f;
+    points.color.a = 1.0;
+
+    // Line strip is red
+    line_strip.color.r = 1.0;
+    line_strip.color.a = 1.0;
+
+    // Line list is blue
+    line_list.color.b = 1.0;
+    line_list.color.a = 1.0;
+
+    for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end ()-1; 
+        it != plan.begin (); --it){
+
+        geometry_msgs::Point p;
+        p.x = (*it).pose.position.x;
+        p.y = (*it).pose.position.y;
+        p.z = (*it).pose.position.z;
+
+        points.points.push_back(p);
+        line_strip.points.push_back(p);
+
+        // The line list needs two points for each line
+        line_list.points.push_back(p);
+        p.z += 1.0;
+        line_list.points.push_back(p);
+        //ros::Duration(0.5).sleep(); 
+    }
+
+    publisher.publish(points);
+    publisher.publish(line_strip);
+    // publisher.publish(line_list);
+
 }
 
 // void callback(const nav_msgs::Odometry::ConstPtr& odom, const sensor_msgs::PointCloud2ConstPtr& points)
@@ -133,6 +223,7 @@ void callback(const geometry_msgs::PoseStamped& goal)
     // plan.push_back(pose);
 
     ROS_INFO("Done planning....");
+    showPath(plan,vis_pub);
     controller->followPath(plan);
 
     //controller->achieveGoal(goal);
@@ -165,6 +256,7 @@ int main(int argc, char** argv)
     // TimeSynchronizer<nav_msgs::Odometry, sensor_msgs::PointCloud2> sync(odom_sub, points_sub, 10);
     // sync.registerCallback(boost::bind(&callback, _1, _2));
 
+    vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
 
     navigation_planner = new NavigationPlanner(nh,topic_octomap);
     navigation_planner->start();
