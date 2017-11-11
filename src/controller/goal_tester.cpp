@@ -61,81 +61,6 @@ void callback(const geometry_msgs::PoseStamped& goal)
     std::vector<geometry_msgs::PoseStamped> plan = 
                     navigation_planner->getNavPlan(current_position);
 
-    // std::vector<geometry_msgs::PoseStamped> plan;
-    // push(0.204518,3.540746,plan);
-    // push(-0.295482,3.540746,plan);
-    // push(-0.795482,3.040746,plan);
-    // push(-0.795482,2.540746,plan);
-    // push(-0.795482,2.040746,plan);
-    // push(-0.795482,1.540746,plan);
-    // push(-0.295482,1.040746,plan);
-    // push(0.204518,0.540746,plan);
-    // push(0.704518,0.040746,plan);
-    // push(1.204518,-0.459254,plan);
-    // push(1.704518,-0.959254,plan);
-    // push(1.204518,-1.459254,plan);
-    // push(0.704518,-1.959254,plan);
-    // push(0.204518,-2.459254,plan);
-    // push(-0.295482,-2.959254,plan);   
-    
-    // push(0204518,3540746,(*plan));
-    // push(0204518,3540746,(*plan));
-
-    // geometry_msgs::PoseStamped pose;
-    // pose.pose.position.x = current_position.pose.position.x+0.5;
-    // pose.pose.position.y = current_position.pose.position.y;
-    // pose.pose.position.z = current_position.pose.position.z;
-    // pose.pose.orientation.x = 0.0;
-    // pose.pose.orientation.y = 0.0;
-    // pose.pose.orientation.z = 0.0;
-    // pose.pose.orientation.w = 1.0;
-    // plan.push_back(pose);
-
-    // pose.pose.position.x = current_position.pose.position.x+1.0;
-    // pose.pose.position.y = current_position.pose.position.y;
-    // pose.pose.position.z = current_position.pose.position.z;
-    // pose.pose.orientation.x = 0.0;
-    // pose.pose.orientation.y = 0.0;
-    // pose.pose.orientation.z = 0.0;
-    // pose.pose.orientation.w = 1.0;
-    // plan.push_back(pose);
-
-    // pose.pose.position.x = current_position.pose.position.x+1.0;
-    // pose.pose.position.y = current_position.pose.position.y+0.5;
-    // pose.pose.position.z = current_position.pose.position.z;
-    // pose.pose.orientation.x = 0.0;
-    // pose.pose.orientation.y = 0.0;
-    // pose.pose.orientation.z = 0.0;
-    // pose.pose.orientation.w = 1.0;
-    // plan.push_back(pose);
-
-    // pose.pose.position.x = current_position.pose.position.x+0.5;
-    // pose.pose.position.y = current_position.pose.position.y+0.5;
-    // pose.pose.position.z = current_position.pose.position.z;
-    // pose.pose.orientation.x = 0.0;
-    // pose.pose.orientation.y = 0.0;
-    // pose.pose.orientation.z = 0.0;
-    // pose.pose.orientation.w = 1.0;
-    // plan.push_back(pose);
-
-    // pose.pose.position.x = current_position.pose.position.x+0.5;
-    // pose.pose.position.y = current_position.pose.position.y;
-    // pose.pose.position.z = current_position.pose.position.z;
-    // pose.pose.orientation.x = 0.0;
-    // pose.pose.orientation.y = 0.0;
-    // pose.pose.orientation.z = 0.0;
-    // pose.pose.orientation.w = 1.0;
-    // plan.push_back(pose);
-
-    // pose.pose.position.x = current_position.pose.position.x+0.5;
-    // pose.pose.position.y = current_position.pose.position.y-0.5;
-    // pose.pose.position.z = current_position.pose.position.z;
-    // pose.pose.orientation.x = 0.0;
-    // pose.pose.orientation.y = 0.0;
-    // pose.pose.orientation.z = 0.0;
-    // pose.pose.orientation.w = 1.0;
-    // plan.push_back(pose);
-
     ROS_INFO("Done planning....");
     visualizer->showPath(plan);
     controller->followPath(plan);
@@ -178,6 +103,7 @@ int main(int argc, char** argv)
     visualizer = new Visualizer(vis_pub,odom_link);
 
     navigation_planner = new NavigationPlanner(nh,topic_octomap);
+    navigation_planner->setBoundaries(-10,10,-10,10);
     navigation_planner->start();
 
     ros::NodeHandle simple_nh("move_base_simple");
