@@ -101,7 +101,7 @@ struct Graph_Node{
     float y_cordinate;
     float z_cordinate;
     Graph_Node *predecessor;
-    int path_cost;
+    float path_cost;
     float priority;
 };
 
