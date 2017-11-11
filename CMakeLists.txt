@@ -219,3 +219,11 @@ target_link_libraries(goal_tester
     cmd_val_controller
     navigation_planner
 )
+
+add_executable(merger_exec src/merger/merger_exec.cpp)
+target_link_libraries(merger_exec
+    ${PCL_LIBRARIES} 
+    ${catkin_LIBRARIES}
+    cmd_val_controller
+    navigation_planner
+)

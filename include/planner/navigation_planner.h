@@ -95,6 +95,7 @@ struct MapIndex{
     }
 };
 
+
 struct Graph_Node{
     float x_cordinate;
     float y_cordinate;
@@ -124,6 +125,7 @@ bool operator<(const MapIndex &v1, const MapIndex &v2){
 /*
     define templates
 */
+
 template<typename Val> struct Array3D{
     typedef std::map<MapIndex, Val> Data;
     Data data;
@@ -146,6 +148,7 @@ template<typename Val> struct Array3D{
     :defaultValue(defaultValue_){
     }
 };
+
 
 class NavigationPlanner{
     private:
@@ -191,12 +194,13 @@ class NavigationPlanner{
         int pathTraversalCost(struct Graph_Node *graph_node);
         void clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& object_cloud);
         int  groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube);
-        void planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud);
+        bool planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud);
         int segmentBoundingCube(float x_cordinate, float y_cordinate, float z_cordinate);
         struct Graph_Node* breadthFirstSearch(float x_cordinate,float y_cordinate,float z_cordinate);
         std::vector<geometry_msgs::PoseStamped> publishPath(struct Graph_Node *node);
         pcl::PointCloud<pcl::PointXYZ>::Ptr calculateConvexHull(vector<pcl::PointXYZ> point_vector,int point_type);
         pcl::PointCloud<pcl::PointXYZ>::Ptr getConvexHull(float x_cordinate, float y_cordinate, float z_cordinate, int point_type, float box_dimension);
+        bool planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d);
 
     public:
         /*
