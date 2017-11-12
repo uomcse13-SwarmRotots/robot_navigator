@@ -324,7 +324,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr NavigationPlanner::getConvexHull(float x_cor
 
 }
 
-bool NavigationPlanner::planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud){
+bool NavigationPlanner::planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud, int type){
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
     pcl::SACSegmentation<pcl::PointXYZ> seg;
@@ -421,7 +421,7 @@ void NavigationPlanner::clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& obje
             std::stringstream ss;
             ss << "cloud_cluster_" << j << ".pcd";
             writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
-            planerCoefficientApproximation(cloud_cluster);
+            planerCoefficientApproximation(cloud_cluster,0);
             j++;
         }
 
@@ -433,7 +433,7 @@ void NavigationPlanner::clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& obje
     }
 }
 
-int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube){
+int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube, int type){
     //ROS_INFO("Reached");
     if(cloud_cube->size()>20){
         pcl::PointIndicesPtr ground (new pcl::PointIndices);
@@ -465,7 +465,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         if(cloud_filtered->size()>0){
             //writer.write<pcl::PointXYZ> ("samp11-utm_object.pcd", *cloud_filtered, false);
             //clusterObjects(cloud_filtered);
-            bool is_traversable = planerCoefficientApproximation(cloud_filtered);
+            bool is_traversable = planerCoefficientApproximation(cloud_filtered,type);
             if(is_traversable){
                 return 1;
             }else{
@@ -514,7 +514,7 @@ int NavigationPlanner::segmentBoundingCube(float x_cordinate, float y_cordinate,
     pass.filter (*cloud_filtered);
 
     if(cloud_filtered->size()>0){
-        int state = groundNonGroundExtraction(cloud_filtered);
+        int state = groundNonGroundExtraction(cloud_filtered,0);
         if(state == 1){
             std::cerr << "Can ENTER........" << std::endl;
             return 1;
@@ -573,7 +573,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(front_x,front_y,z_cordinate) & !found_obstacles->hasValue(front_x,front_y,z_cordinate)){
             convex_cloud = getConvexHull(front_x,front_y,z_cordinate,1,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud);
+            result = groundNonGroundExtraction(convex_cloud,1);
             if(result == -1){
                 //ROS_INFO("Return on 1");
                 return current_node;
@@ -612,7 +612,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(front_left_x,front_left_y,z_cordinate) && !found_obstacles->hasValue(front_left_x,front_left_y,z_cordinate)){
             convex_cloud = getConvexHull(front_left_x,front_left_y,z_cordinate,2,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud); 
+            result = groundNonGroundExtraction(convex_cloud,2); 
             if(result == -1){
                 //ROS_INFO("Return on 2");
                 return current_node;
@@ -650,7 +650,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(left_x,left_y,z_cordinate) && !found_obstacles->hasValue(left_x,left_y,z_cordinate)){
             convex_cloud = getConvexHull(left_x,left_y,z_cordinate,3,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud);
+            result = groundNonGroundExtraction(convex_cloud,3);
             if(result == -1){
                 //ROS_INFO("Return on 3");
                 return current_node;
@@ -687,7 +687,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(back_left_x,back_left_y,z_cordinate) && !found_obstacles->hasValue(back_left_x,back_left_y,z_cordinate)){
             convex_cloud = getConvexHull(back_left_x,back_left_y,z_cordinate,4,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud);
+            result = groundNonGroundExtraction(convex_cloud,4);
             if(result == -1){
                 //ROS_INFO("Return on 4");
                 return current_node;
@@ -724,7 +724,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(back_x,back_y,z_cordinate) && !found_obstacles->hasValue(back_x,back_y,z_cordinate)){
             convex_cloud = getConvexHull(back_x,back_y,z_cordinate,5,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud);
+            result = groundNonGroundExtraction(convex_cloud,5);
             if(result == -1){
                 //ROS_INFO("Return on 5");
                 return current_node;
@@ -762,7 +762,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(back_right_x,back_right_y,z_cordinate) && !found_obstacles->hasValue(back_right_x,back_right_y,z_cordinate)){
             convex_cloud = getConvexHull(back_right_x,back_right_y,z_cordinate,6,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud);
+            result = groundNonGroundExtraction(convex_cloud,6);
             if(result == -1){
                 //ROS_INFO("Return on 6");
                 return current_node;
@@ -799,7 +799,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(right_x,right_y,z_cordinate) && !found_obstacles->hasValue(right_x,right_y,z_cordinate)){
             convex_cloud = getConvexHull(right_x,right_y,z_cordinate,7,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud);
+            result = groundNonGroundExtraction(convex_cloud,7);
             if(result == -1){
                 //ROS_INFO("Return on 7");
                 return current_node;
@@ -837,7 +837,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         if(!found_nodes->hasValue(front_right_x,front_right_y,z_cordinate) && !found_obstacles->hasValue(front_right_x,front_right_y,z_cordinate)){
             convex_cloud = getConvexHull(front_right_x,front_right_y,z_cordinate,8,0.50);
             
-            result = groundNonGroundExtraction(convex_cloud);
+            result = groundNonGroundExtraction(convex_cloud,8);
             if(result == -1){
                 //ROS_INFO("Return on 8");
                 return current_node;
@@ -922,7 +922,7 @@ void NavigationPlanner::getFrontPlane(const geometry_msgs::PoseStamped& pose){
     float z_cordinate = pose.pose.position.z;
     pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
     convex_cloud = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
-    int result = groundNonGroundExtraction(convex_cloud);
+    int result = groundNonGroundExtraction(convex_cloud,0);
     //ROS_INFO("%d",result);
 }
 

@@ -194,8 +194,8 @@ class NavigationPlanner{
         struct Graph_Node *getBreadthFirstSearchNodes(float x_cordinate, float y_cordinate, float z_cordinate,float box_dimension);
         int pathTraversalCost(struct Graph_Node *graph_node);
         void clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& object_cloud);
-        int  groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube);
-        bool planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud);
+        int  groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube,int type);
+        bool planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud,int type);
         int segmentBoundingCube(float x_cordinate, float y_cordinate, float z_cordinate);
         struct Graph_Node* breadthFirstSearch(float x_cordinate,float y_cordinate,float z_cordinate);
         std::vector<geometry_msgs::PoseStamped> publishPath(struct Graph_Node *node);
