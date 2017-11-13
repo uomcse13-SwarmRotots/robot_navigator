@@ -103,6 +103,7 @@ struct Graph_Node{
     Graph_Node *predecessor;
     float path_cost;
     float priority;
+    float marker_z_cordinate;
 };
 
 /*

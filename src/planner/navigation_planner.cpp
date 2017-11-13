@@ -5,6 +5,7 @@ struct Graph_Node *current_node;
 float current_x_node;
 float current_y_node;
 float current_z_node;
+float marker_z_cordinate;
 
 bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d, int type){
 	double a2_ = a/(sqrt(a*a+b*b+c*c));
@@ -679,22 +680,23 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float front_y = y_cordinate;
         if(!found_nodes->hasValue(front_x,front_y,z_cordinate) & !found_obstacles->hasValue(front_x,front_y,z_cordinate)){
             convex_cloud = getConvexHull(front_x,front_y,z_cordinate,1,0.50);
-            
             result = groundNonGroundExtraction(convex_cloud,1);
+            marker_z_cordinate = z_cordinate;
             if(result == -1){
                 //ROS_INFO("Return on 1");
                 return current_node;
             }else if(result == 1){
+
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = front_x;
                 temp_node->y_cordinate = front_y;
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
-                
-                    found_nodes->setValue(front_x,front_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
-                    //ROS_INFO("1 %f %f %f",front_x,front_y,z_cordinate);
+                temp_node->marker_z_cordinate = marker_z_cordinate;
+                found_nodes->setValue(front_x,front_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+                //ROS_INFO("1 %f %f %f",front_x,front_y,z_cordinate);
                 
             }else{
                 found_obstacles->setValue(front_x,front_y,z_cordinate,0);
@@ -718,7 +720,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         
         if(!found_nodes->hasValue(front_left_x,front_left_y,z_cordinate) && !found_obstacles->hasValue(front_left_x,front_left_y,z_cordinate)){
             convex_cloud = getConvexHull(front_left_x,front_left_y,z_cordinate,2,0.50);
-            
+            marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,2); 
             if(result == -1){
                 //ROS_INFO("Return on 2");
@@ -730,9 +732,9 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
-                
-                    found_nodes->setValue(front_left_x,front_left_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
+                temp_node->marker_z_cordinate = marker_z_cordinate;
+                found_nodes->setValue(front_left_x,front_left_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
                     //ROS_INFO("2 %f %f %f",front_left_x,front_left_y,z_cordinate);
                 
             }else{
@@ -756,7 +758,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float left_y = y_cordinate + box_dimension;
         if(!found_nodes->hasValue(left_x,left_y,z_cordinate) && !found_obstacles->hasValue(left_x,left_y,z_cordinate)){
             convex_cloud = getConvexHull(left_x,left_y,z_cordinate,3,0.50);
-            
+            marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,3);
             if(result == -1){
                 //ROS_INFO("Return on 3");
@@ -768,9 +770,9 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
-                
-                    found_nodes->setValue(left_x,left_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
+                temp_node->marker_z_cordinate = marker_z_cordinate;
+                found_nodes->setValue(left_x,left_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
                     //ROS_INFO("3 %f %f %f",left_x,left_y,z_cordinate);
                 
             }else{
@@ -793,7 +795,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float back_left_y = y_cordinate + box_dimension;
         if(!found_nodes->hasValue(back_left_x,back_left_y,z_cordinate) && !found_obstacles->hasValue(back_left_x,back_left_y,z_cordinate)){
             convex_cloud = getConvexHull(back_left_x,back_left_y,z_cordinate,4,0.50);
-            
+            marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,4);
             if(result == -1){
                 //ROS_INFO("Return on 4");
@@ -805,10 +807,10 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
-                
-                    found_nodes->setValue(back_left_x,back_left_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
-                    //ROS_INFO("4 %f %f %f",back_left_x,back_left_y,z_cordinate);
+                temp_node->marker_z_cordinate = marker_z_cordinate;
+                found_nodes->setValue(back_left_x,back_left_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+                //ROS_INFO("4 %f %f %f",back_left_x,back_left_y,z_cordinate);
                 
             }else{
                 found_obstacles->setValue(back_left_x,back_left_y,z_cordinate,0);
@@ -830,7 +832,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float back_y = y_cordinate;
         if(!found_nodes->hasValue(back_x,back_y,z_cordinate) && !found_obstacles->hasValue(back_x,back_y,z_cordinate)){
             convex_cloud = getConvexHull(back_x,back_y,z_cordinate,5,0.50);
-            
+            marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,5);
             if(result == -1){
                 //ROS_INFO("Return on 5");
@@ -842,11 +844,10 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
-                
-                
-                    found_nodes->setValue(back_x,back_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
-                    //ROS_INFO("5 %f %f %f",back_x,back_y,z_cordinate);
+                temp_node->marker_z_cordinate = marker_z_cordinate;
+                found_nodes->setValue(back_x,back_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+                //ROS_INFO("5 %f %f %f",back_x,back_y,z_cordinate);
                 
             } else{
                 found_obstacles->setValue(back_x,back_y,z_cordinate,0);
@@ -868,7 +869,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float back_right_y = y_cordinate - box_dimension;
         if(!found_nodes->hasValue(back_right_x,back_right_y,z_cordinate) && !found_obstacles->hasValue(back_right_x,back_right_y,z_cordinate)){
             convex_cloud = getConvexHull(back_right_x,back_right_y,z_cordinate,6,0.50);
-            
+            marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,6);
             if(result == -1){
                 //ROS_INFO("Return on 6");
@@ -880,10 +881,10 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
-                            
-                    found_nodes->setValue(back_right_x,back_right_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
-                    //ROS_INFO("6 %f %f %f",back_right_x,back_right_y,z_cordinate);
+                temp_node->marker_z_cordinate = marker_z_cordinate;       
+                found_nodes->setValue(back_right_x,back_right_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+                //ROS_INFO("6 %f %f %f",back_right_x,back_right_y,z_cordinate);
                 
             } else{
                 found_obstacles->setValue(back_right_x,back_right_y,z_cordinate,0);
@@ -905,7 +906,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float right_y = y_cordinate - box_dimension;
         if(!found_nodes->hasValue(right_x,right_y,z_cordinate) && !found_obstacles->hasValue(right_x,right_y,z_cordinate)){
             convex_cloud = getConvexHull(right_x,right_y,z_cordinate,7,0.50);
-            
+            marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,7);
             if(result == -1){
                 //ROS_INFO("Return on 7");
@@ -917,10 +918,10 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
-                
-                    found_nodes->setValue(right_x,right_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
-                    //ROS_INFO("7 %f %f %f",right_x,right_y,z_cordinate);
+                temp_node->marker_z_cordinate = marker_z_cordinate;
+                found_nodes->setValue(right_x,right_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+                //ROS_INFO("7 %f %f %f",right_x,right_y,z_cordinate);
                 
             } else{
                 found_obstacles->setValue(right_x,right_y,z_cordinate,0);
@@ -943,7 +944,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float front_right_y = y_cordinate - box_dimension; 
         if(!found_nodes->hasValue(front_right_x,front_right_y,z_cordinate) && !found_obstacles->hasValue(front_right_x,front_right_y,z_cordinate)){
             convex_cloud = getConvexHull(front_right_x,front_right_y,z_cordinate,8,0.50);
-            
+            marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,8);
             if(result == -1){
                 //ROS_INFO("Return on 8");
@@ -955,10 +956,10 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
-
-                    found_nodes->setValue(front_right_x,front_right_y,z_cordinate,temp_node);
-                    node_queue.push(temp_node);
-                    //ROS_INFO("8 %f %f %f",front_right_x,front_right_y,z_cordinate);
+                temp_node->marker_z_cordinate = marker_z_cordinate;
+                found_nodes->setValue(front_right_x,front_right_y,z_cordinate,temp_node);
+                node_queue.push(temp_node);
+                //ROS_INFO("8 %f %f %f",front_right_x,front_right_y,z_cordinate);
 
             }else{
                 found_obstacles->setValue(front_right_x,front_right_y,z_cordinate,0);
