@@ -201,7 +201,7 @@ class NavigationPlanner{
         std::vector<geometry_msgs::PoseStamped> publishPath(struct Graph_Node *node);
         pcl::PointCloud<pcl::PointXYZ>::Ptr calculateConvexHull(vector<pcl::PointXYZ> point_vector,int point_type);
         pcl::PointCloud<pcl::PointXYZ>::Ptr getConvexHull(float x_cordinate, float y_cordinate, float z_cordinate, int point_type, float box_dimension);
-        bool planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d);
+        bool planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d, int type);
 
     public:
         float max_x_cordinate_;

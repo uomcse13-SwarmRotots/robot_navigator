@@ -6,25 +6,132 @@ float current_x_node;
 float current_y_node;
 float current_z_node;
 
-bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d){
-	double c2_ = c/(sqrt(a*a+b*b+c*c));
-	double angle = acos(c2_);
+bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d, int type){
+	double a2_ = a/(sqrt(a*a+b*b+c*c));
+    double b2_ = b/(sqrt(a*a+b*b+c*c));
+    double c2_ = c/(sqrt(a*a+b*b+c*c));
+    double angle_x = acos(a2_);
+    double angle_y = acos(b2_);
+    double angle_z = acos(c2_);
 	//Print angle	
-	double acceptedAngle 	= 0.349066; // 20 degree
-	double acceptedDistance = (d/2)*sin(angle);
+    double acceptedAngle 	= 0.523599; // 30 degree
+    double acceptedAngle90  = 1.39626; // 80 degree
+    double acceptedDistance_1 = (d/2)*sin(angle_x);
+    double acceptedDistance_2 = (d/2)*sin(angle_y);
+    double acceptedDistance_3 = (d/2)*sin(angle_z);
 	//checking the traversability
-	//Angle check
-	if(angle<acceptedAngle){ 
-		//distance calculation and check
-		//double upper = a*x0 + b*y0 + c*z0 + d;
-		//double lower = sqrt(a*a+b*b+c*c);
-		double distance = (a*x0 + b*y0 + c*z0 + e)/sqrt(a*a+b*b+c*c);
-		//Print distance
-		//take evaluationg decision based on values
-		return true;
-		
-	}
-	else return false;
+    //Angle check
+    double distance = (a*x0 + b*y0 + c*z0 + e)/sqrt(a*a+b*b+c*c);
+    std::cout<< "a2_ " << a2_ << endl;
+    std::cout<< "b2_ " << b2_ << endl;
+    std::cout<< "c2_ " << c2_ << endl;
+    std::cout<< "angle_x " << angle_x << endl;
+    std::cout<< "angle_y " << angle_y << endl;
+    std::cout<< "angle_z " << angle_z << endl;
+    std::cout<< "acceptedAngle " << acceptedAngle << endl;
+    std::cout<< "acceptedDistance_1 " << acceptedDistance_1 << endl;
+    std::cout<< "acceptedDistance_2 " << acceptedDistance_2 << endl;
+    std::cout<< "acceptedDistance_3 " << acceptedDistance_3 << endl;
+    std::cout<< "distance " << distance << endl;
+
+    switch(type){
+        case 1:
+            if(angle_y>acceptedAngle90){
+                if(angle_z<acceptedAngle){ 
+                    if(distance>=0 && distance > acceptedDistance_3){
+                        std::cout<< "traversable case 1+ " << endl;
+                        return true;
+                    }
+                    else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
+                        std::cout<< "traversable case 1-" << endl;
+                        return true;
+                    }
+                    else {
+                        std::cout<< "un-traversable case 1" << endl;
+                        return false;
+                    }
+                }
+                else {
+                    std::cout<< "un-traversable case 1o" << endl;
+                    return false;
+                }
+            }
+            std::cout<< "un-traversable o" << endl;
+            return false;
+            break;
+        case 3:
+            if(angle_x>acceptedAngle90){
+                if(angle_z<acceptedAngle){ 
+                    if(distance>=0 && distance > acceptedDistance_3){
+                        std::cout<< "traversable case 3+" << endl;
+                        return true;
+                    }
+                    else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
+                        std::cout<< "traversable case 3-" << endl;
+                        return true;
+                    }
+                    else {
+                        std::cout<< "un-traversable case 3" << endl;
+                        return false;
+                    }
+                }
+                else {
+                    std::cout<< "un-traversable case 3o" << endl;
+                    return false;
+                }
+            }
+            std::cout<< "un-traversable o" << endl;
+            return false;
+            break;
+        case 5:
+            if(angle_y>acceptedAngle90){
+                if(angle_z<acceptedAngle){ 
+                    if(distance>=0 && distance > acceptedDistance_3){
+                        std::cout<< "traversable case 5+" << endl;
+                        return true;
+                    }
+                    else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
+                        std::cout<< "traversable case 5-" << endl;
+                        return true;
+                    }
+                    else {
+                        std::cout<< "un-traversable case 5" << endl;
+                        return false;
+                    }
+                }
+                else {
+                    std::cout<< "un-traversable case 5o" << endl;
+                    return false;
+                }
+            }
+            std::cout<< "un-traversable o" << endl;
+            return false;
+            break;
+        case 7:
+            if(angle_x>acceptedAngle90){
+                if(angle_z<acceptedAngle){ 
+                    if(distance>=0 && distance > acceptedDistance_3){
+                        std::cout<< "traversable case 7+" << endl;
+                        return true;
+                    }
+                    else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
+                        std::cout<< "traversable case 7-" << endl;
+                        return true;
+                    }
+                    else {
+                        std::cout<< "un-traversable case 7" << endl;
+                        return false;
+                    }
+                }
+                else {
+                    std::cout<< "un-traversable case 7o" << endl;
+                    return false;
+                }
+            }
+            std::cout<< "un-traversable o" << endl;
+            return false;
+            break;
+    }
 
 }
 
@@ -344,7 +451,7 @@ bool NavigationPlanner::planerCoefficientApproximation(pcl::PointCloud<pcl::Poin
                                         << coefficients->values[1] << " "
                                         << coefficients->values[2] << " " 
                                         << coefficients->values[3] << std::endl;
-    return planeTraversabilityCheck(coefficients->values[0],coefficients->values[1],coefficients->values[2],coefficients->values[3], current_x_node,current_y_node,current_z_node, 0.5);
+    return planeTraversabilityCheck(coefficients->values[0],coefficients->values[1],coefficients->values[2],coefficients->values[3], current_x_node,current_y_node,current_z_node, 0.5, type);
 }
 
 
@@ -917,13 +1024,46 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
 }
 
 void NavigationPlanner::getFrontPlane(const geometry_msgs::PoseStamped& pose){
-    float x_cordinate = pose.pose.position.x+0.5;
+    std::cout << "----0------" << std::endl;
+    float x_cordinate = pose.pose.position.x;
     float y_cordinate = pose.pose.position.y;
     float z_cordinate = pose.pose.position.z;
-    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
-    convex_cloud = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
-    int result = groundNonGroundExtraction(convex_cloud,0);
-    //ROS_INFO("%d",result);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud0;
+    convex_cloud0 = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
+    int result = groundNonGroundExtraction(convex_cloud0, 0);
+    ROS_INFO("%d",result);
+    std::cout << "----1------" << std::endl;
+    x_cordinate = pose.pose.position.x+1.0;
+    y_cordinate = pose.pose.position.y;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud1;
+    convex_cloud1 = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
+    result = groundNonGroundExtraction(convex_cloud1, 1);
+    ROS_INFO("%d",result);
+    std::cout << "----2------" << std::endl;
+    x_cordinate = pose.pose.position.x;
+    y_cordinate = pose.pose.position.y+1.0;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud2;
+    convex_cloud2 = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
+    result = groundNonGroundExtraction(convex_cloud2, 3);
+    ROS_INFO("%d",result);
+    std::cout << "----3------" << std::endl;
+    x_cordinate = pose.pose.position.x-1.0;
+    y_cordinate = pose.pose.position.y;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud3;
+    convex_cloud3 = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
+    result = groundNonGroundExtraction(convex_cloud3, 5);
+    ROS_INFO("%d",result);
+    std::cout << "----4------" << std::endl;
+    x_cordinate = pose.pose.position.x;
+    y_cordinate = pose.pose.position.y-1.0;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud4;
+    convex_cloud4 = getConvexHull(x_cordinate,y_cordinate,z_cordinate,8,0.50);        
+    result = groundNonGroundExtraction(convex_cloud4, 7);
+    ROS_INFO("%d",result);
 }
 
 std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geometry_msgs::PoseStamped& pose){
