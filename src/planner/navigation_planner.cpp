@@ -7,22 +7,23 @@ float current_y_node;
 float current_z_node;
 float marker_z_cordinate;
 
-bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d, int type){
-	double a2_ = a/(sqrt(a*a+b*b+c*c));
-    double b2_ = b/(sqrt(a*a+b*b+c*c));
-    double c2_ = c/(sqrt(a*a+b*b+c*c));
-    double angle_x = acos(a2_);
-    double angle_y = acos(b2_);
-    double angle_z = acos(c2_);
+bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e, float x0,float y0,float z0, float d, int type){
+	float a2_ = a/(sqrt(a*a+b*b+c*c));
+    float b2_ = b/(sqrt(a*a+b*b+c*c));
+    float c2_ = c/(sqrt(a*a+b*b+c*c));
+    float angle_x = acos(a2_);
+    float angle_y = acos(b2_);
+    float angle_z = acos(c2_);
+    // float z;
 	//Print angle	
-    double acceptedAngle 	= 0.523599; // 30 degree
-    double acceptedAngle90  = 1.39626; // 80 degree
-    double acceptedDistance_1 = (d/2)*sin(angle_x);
-    double acceptedDistance_2 = (d/2)*sin(angle_y);
-    double acceptedDistance_3 = (d/2)*sin(angle_z);
+    float acceptedAngle 	= 0.523599; // 30 degree
+    float acceptedAngle90  = 1.39626; // 80 degree
+    float acceptedDistance_1 = (d/2)*sin(angle_x);
+    float acceptedDistance_2 = (d/2)*sin(angle_y);
+    float acceptedDistance_3 = (d/2)*sin(angle_z);
 	//checking the traversability
     //Angle check
-    double distance = (a*x0 + b*y0 + c*z0 + e)/sqrt(a*a+b*b+c*c);
+    float distance = (a*x0 + b*y0 + c*z0 + e)/sqrt(a*a+b*b+c*c);
     std::cout<< "a2_ " << a2_ << endl;
     std::cout<< "b2_ " << b2_ << endl;
     std::cout<< "c2_ " << c2_ << endl;
@@ -41,10 +42,12 @@ bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,doub
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
                         std::cout<< "traversable case 1+ " << endl;
+                        marker_z_cordinate = (-1*e - a*(x0+d) -b*y0)/c;
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
                         std::cout<< "traversable case 1-" << endl;
+                        marker_z_cordinate = (-1*e - a*(x0+d) -b*y0)/c;
                         return true;
                     }
                     else {
@@ -65,10 +68,12 @@ bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,doub
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
                         std::cout<< "traversable case 3+" << endl;
+                        marker_z_cordinate = (-1*e - a*x0 -b*(y0+d))/c;
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
                         std::cout<< "traversable case 3-" << endl;
+                        marker_z_cordinate = (-1*e - a*x0 -b*(y0+d))/c;
                         return true;
                     }
                     else {
@@ -89,10 +94,12 @@ bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,doub
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
                         std::cout<< "traversable case 5+" << endl;
+                        marker_z_cordinate = (-1*e - a*(x0-d) -b*y0)/c;
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
                         std::cout<< "traversable case 5-" << endl;
+                        marker_z_cordinate = (-1*e - a*(x0-d) -b*y0)/c;
                         return true;
                     }
                     else {
@@ -113,10 +120,12 @@ bool NavigationPlanner::planeTraversabilityCheck(double a,double b,double c,doub
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
                         std::cout<< "traversable case 7+" << endl;
+                        marker_z_cordinate = (-1*e - a*x0 -b*(y0-d))/c;
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
                         std::cout<< "traversable case 7-" << endl;
+                        marker_z_cordinate = (-1*e - a*x0 -b*(y0-d))/c;
                         return true;
                     }
                     else {
