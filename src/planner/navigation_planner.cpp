@@ -559,14 +559,12 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         extract.setInputCloud (cloud_cube);
         extract.setIndices (ground);
         extract.filter (*cloud_filtered);
-
+        bool ground_cloud = false;
         pcl::PCDWriter writer;
         if(cloud_filtered->size()>100){
-            //writer.write<pcl::PointXYZ> ("samp11-utm_ground.pcd", *cloud_filtered, false);
-        }else{
-            //ROS_INFO("End %d",-1);
-            return -1;
+            ground_cloud = true;
         }
+
         extract.setNegative (true);
         extract.filter (*cloud_filtered);
 
@@ -579,13 +577,15 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
             }else{
                 return 0;
             }
-
         }else{
             //ROS_INFO("End %d",1);
-            return 1;
+            if(ground_cloud){
+                return 1;
+            }else{
+                return -1;
+            }
+            
         }
-        //ROS_INFO("END %d",0);
-        return 0;
     }else{
         //ROS_INFO("End %d",-1);
         return -1;
