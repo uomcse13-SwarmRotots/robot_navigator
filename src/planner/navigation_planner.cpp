@@ -1012,7 +1012,7 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
 
         pose.pose.position.x = temp_node1->x_cordinate;
         pose.pose.position.y = temp_node1->y_cordinate;
-        pose.pose.position.z = temp_node1->z_cordinate;
+        pose.pose.position.z = temp_node1->marker_z_cordinate;
         pose.pose.orientation.x = 0.0;
         pose.pose.orientation.y = 0.0;
         pose.pose.orientation.z = 0.0;
