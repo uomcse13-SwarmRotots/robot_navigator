@@ -9,6 +9,9 @@
 #include <math.h>
 #include <vector>
 
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+
 
 namespace swarm_navigator {
 

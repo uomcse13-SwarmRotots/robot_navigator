@@ -104,6 +104,7 @@ namespace swarm_navigator {
             //send the drive command
             publisher_.publish(base_cmd);
             rate.sleep();
+            boost::this_thread::interruption_point();
             //get the current transform
             try
             {
@@ -164,6 +165,7 @@ namespace swarm_navigator {
             //send the drive command
             publisher_.publish(base_cmd);
             rate.sleep();
+            boost::this_thread::interruption_point();
             //get the current transform
             try
             {
@@ -312,6 +314,7 @@ namespace swarm_navigator {
             ROS_INFO("cordinates %f %f %f",(*it).pose.position.x,(*it).pose.position.y,(*it).pose.position.z);
             achieveGoal(*it); 
             ros::Duration(0.5).sleep(); 
+            boost::this_thread::interruption_point();
         }
 
         return true;

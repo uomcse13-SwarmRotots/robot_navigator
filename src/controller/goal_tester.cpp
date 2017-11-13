@@ -31,18 +31,6 @@ void push(double x,double y,std::vector<geometry_msgs::PoseStamped>& plan){
 }
 
 
-// void callback(const nav_msgs::Odometry::ConstPtr& odom, const sensor_msgs::PointCloud2ConstPtr& points)
-// {
-//     // if(odom==NULL)
-//     //     ROS_INFO("pointcloud recieved______________________");
-//     // else
-//     //     ROS_INFO("odom recieved ######################");
-
-//     ROS_INFO("ODOM Seq: [%d]", odom->header.seq);
-//     ROS_INFO("POINT Seq: [%d]", points->header.seq);
-    
-// }
-
 void callback(const geometry_msgs::PoseStamped& goal)
 {
     // if(odom==NULL)
@@ -60,6 +48,8 @@ void callback(const geometry_msgs::PoseStamped& goal)
     tf::poseStampedTFToMsg(global_pose, current_position);
     std::vector<geometry_msgs::PoseStamped> plan = 
                     navigation_planner->getNavPlan(current_position);
+
+    // std::vector<geometry_msgs::PoseStamped> plan;
 
     ROS_INFO("Done planning....");
     visualizer->showPath(plan);
@@ -103,12 +93,11 @@ int main(int argc, char** argv)
     visualizer = new Visualizer(vis_pub,odom_link);
 
     navigation_planner = new NavigationPlanner(nh,topic_octomap);
-    navigation_planner->setBoundaries(-10,10,-10,10);
     navigation_planner->start();
 
     ros::NodeHandle simple_nh("move_base_simple");
     ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, callback);
-// 
+    
 
     // ros::Subscriber goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1);
     ros::spin();
