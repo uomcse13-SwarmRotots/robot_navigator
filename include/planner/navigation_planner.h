@@ -179,6 +179,12 @@ class NavigationPlanner{
         ros::NodeHandle node_handle_;
         std::string topic_;
 
+        float box_dimension_;
+        float min_x_cordinate_;
+        float max_x_cordinate_;
+        float min_y_cordinate_;
+        float max_y_cordinate_;
+
         /*
             methods
         */
@@ -205,18 +211,14 @@ class NavigationPlanner{
         bool planeTraversabilityCheck(double a,double b,double c,double e, double x0,double y0,double z0, double d, int type);
 
     public:
-        float max_x_cordinate_;
-        float min_x_cordinate_;
-        float max_y_cordinate_;
-        float min_y_cordinate_;
         /*
             methods
         */
         void retrieveDataFromOctomap(const octomap_msgs::OctomapConstPtr& msg);
-        void setBoundaries(float min_x_cordinate, float max_x_cordinate, float min_y_cordinate,float max_y_cordinate);
         int **checkNeighbourhood(const geometry_msgs::PoseStamped& pose, float box_dimension);
         void start();
         NavigationPlanner(ros::NodeHandle &nh, std::string topic);
+        NavigationPlanner(ros::NodeHandle &nh, std::string topic, float box_dimension, float min_x_cordinate, float max_x_cordinate, float min_y_cordinate, float max_y_cordinate);
         void neighbourhoodCallback(const geometry_msgs::PoseStamped& pose);
         void startTraversal(const geometry_msgs::PoseStamped& pose);
         std::vector<geometry_msgs::PoseStamped> getNavPlan(const geometry_msgs::PoseStamped& pose);
