@@ -200,6 +200,7 @@ add_library(path_visualizer src/support/path_visualizer.cpp)
 #add_executable(map_merger src/merger/map_merger.cpp)
 
 add_library(cmd_val_controller  src/controller/cmd_val_controller.cpp)
+add_library(keyboard_teleop_lib  src/controller/keyboard_teleop.cpp)
 #target_link_libraries ( PCL_Processing ${PCL_LIBRARIES} ${catkin_LIBRARIES} )
 #target_link_libraries ( map_merger 
 #    ${PCL_LIBRARIES} 
@@ -228,4 +229,31 @@ target_link_libraries(merger_exec
     ${catkin_LIBRARIES}
     cmd_val_controller
     navigation_planner
+)
+
+add_executable(robot_controller src/controller/robot_controller.cpp)
+target_link_libraries(robot_controller
+    ${PCL_LIBRARIES} 
+    ${catkin_LIBRARIES}
+    cmd_val_controller
+    navigation_planner
+    keyboard_teleop_lib
+    path_visualizer
+)
+
+add_executable(robot_remote_controller src/controller/robot_remote_controller.cpp)
+target_link_libraries(robot_remote_controller    
+    ${catkin_LIBRARIES}
+    keyboard_teleop_lib
+)
+
+add_executable(keyboard_teleop src/controller/keyboard_teleop.cpp)
+target_link_libraries(keyboard_teleop     
+    ${catkin_LIBRARIES}
+    keyboard_teleop_lib
+)
+
+add_executable(code_tester src/support/code_tester.cpp)
+target_link_libraries(code_tester    
+    ${catkin_LIBRARIES}
 )
