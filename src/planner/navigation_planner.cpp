@@ -979,7 +979,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
 
     if(node_queue.empty()){
         //ROS_INFO("No Nodes to Traverse");
-        return current_node;
+        return NULL;
     }else{
         struct Graph_Node *next_node = node_queue.front();
         node_queue.pop();
@@ -1078,6 +1078,7 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geom
     
     struct Graph_Node *node = breadthFirstSearch(x_cordinate,y_cordinate,z_cordinate);
     //ROS_INFO("3");
+
     while(!node_queue.empty()){
         node_queue.pop();
     }
