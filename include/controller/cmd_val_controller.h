@@ -12,6 +12,8 @@
 #include "boost/thread/mutex.hpp"
 #include "boost/thread/thread.hpp"
 
+#define MAX_SPEED 1.0
+#define MIN_SPEED 0.1
 
 namespace swarm_navigator {
 
@@ -27,7 +29,10 @@ class CmdValController{
 
         float liner_velocity_;
         float angular_velocity_;
-
+        
+        float keyboard_liner_velocity_;
+        float keyboard_angular_velocity_;
+        bool keyboard_stop_;
         
         
 
@@ -51,6 +56,18 @@ class CmdValController{
         void setLinerVelocity(float velocity);
         void setAngularVelocity(float velocity);
         bool ready();
+
+        void keyboard_foward();
+        void keyboard_backward();
+        void keyboard_left();
+        void keyboard_right();
+        void keyboard_stop();
+
+        void keyboard_speedup();
+        void keyboard_speeddown();
+        void keyboard_speeddownAnguler();
+        void keyboard_speedupAnguler();
+        
 
 };
 

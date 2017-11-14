@@ -5,22 +5,30 @@ namespace swarm_navigator {
 
     CmdValController::CmdValController(ros::NodeHandle &nh,std::string topic,std::string base_link,std::string odom_link){
         nh_ = nh;
-        liner_velocity_ = 0.25;
+        liner_velocity_ = 0.1;
         angular_velocity_ = 0.75;
+        keyboard_liner_velocity_ = 0.1;
+        keyboard_angular_velocity_ = 0.75;
+
         base_link_ = base_link;
         odom_link_ = odom_link;
         //set up the publisher for the cmd_vel topic
-        publisher_ = nh_.advertise<geometry_msgs::Twist>(topic, 1);        
+        publisher_ = nh_.advertise<geometry_msgs::Twist>(topic, 1); 
+        keyboard_stop_ = true;       
     }
 
     CmdValController::CmdValController(ros::NodeHandle &nh,std::string topic){
         nh_ = nh;
-        liner_velocity_ = 0.25;
+        liner_velocity_ = 0.1;
         angular_velocity_ = 0.75;
+        keyboard_liner_velocity_ = 0.1;
+        keyboard_angular_velocity_ = 0.75;
+
         base_link_ = "base_link"; //"base_footprint"
         odom_link_ = "odom";
         //set up the publisher for the cmd_vel topic
-        publisher_ = nh_.advertise<geometry_msgs::Twist>(topic, 1);        
+        publisher_ = nh_.advertise<geometry_msgs::Twist>(topic, 1);  
+        keyboard_stop_ = true;      
     }
     
 
@@ -95,7 +103,7 @@ namespace swarm_navigator {
         geometry_msgs::Twist base_cmd;
         //the command will be to go forward at 0.25 m/s
         base_cmd.linear.y = base_cmd.angular.z = 0;
-        base_cmd.linear.x = 0.1;
+        base_cmd.linear.x = liner_velocity_;
         
         ros::Rate rate(10.0);
         bool done = false;
@@ -152,7 +160,7 @@ namespace swarm_navigator {
         geometry_msgs::Twist base_cmd;
         //the command will be to turn at 0.75 rad/s
         base_cmd.linear.x = base_cmd.linear.y = 0.0;
-        base_cmd.angular.z = 0.75;
+        base_cmd.angular.z = angular_velocity_;
         if (clockwise) base_cmd.angular.z = -base_cmd.angular.z;
         
         //the axis we want to be rotating by
@@ -318,5 +326,110 @@ namespace swarm_navigator {
         }
 
         return true;
+    }
+
+    void CmdValController::keyboard_foward(){
+        keyboard_stop_ = false;        
+        
+        geometry_msgs::Twist base_cmd;        
+        
+        ros::Rate rate(10.0);
+        
+        while (!keyboard_stop_ && nh_.ok())
+        {
+            base_cmd.linear.y = base_cmd.angular.z = 0;
+            base_cmd.linear.x = keyboard_liner_velocity_;
+            //send the drive command
+            publisher_.publish(base_cmd);
+            rate.sleep();
+            boost::this_thread::interruption_point();
+            
+        }
+        stop();
+    }
+    void CmdValController::keyboard_backward(){
+        keyboard_stop_ = false;        
+        
+        geometry_msgs::Twist base_cmd;        
+        
+        ros::Rate rate(10.0);
+        
+        while (!keyboard_stop_ && nh_.ok())
+        {
+            base_cmd.linear.y = base_cmd.angular.z = 0;
+            base_cmd.linear.x = -keyboard_liner_velocity_;
+            //send the drive command
+            publisher_.publish(base_cmd);
+            rate.sleep();
+            boost::this_thread::interruption_point();
+            
+        }
+        stop();
+    }
+   
+    void CmdValController::keyboard_left(){
+        keyboard_stop_ = false;        
+        
+        geometry_msgs::Twist base_cmd;        
+        
+        ros::Rate rate(10.0);
+        
+        while (!keyboard_stop_ && nh_.ok())
+        {
+            base_cmd.linear.x = base_cmd.linear.y = 0.0;
+            base_cmd.angular.z = keyboard_angular_velocity_;
+            //send the drive command
+            publisher_.publish(base_cmd);
+            rate.sleep();
+            boost::this_thread::interruption_point();
+            
+        }
+        stop();
+    }
+    void CmdValController::keyboard_right(){
+        keyboard_stop_ = false;        
+        
+        geometry_msgs::Twist base_cmd;        
+        
+        ros::Rate rate(10.0);
+        
+        while (!keyboard_stop_ && nh_.ok())
+        {
+            base_cmd.linear.x = base_cmd.linear.y = 0.0;
+            base_cmd.angular.z = -keyboard_angular_velocity_;
+            //send the drive command
+            publisher_.publish(base_cmd);
+            rate.sleep();
+            boost::this_thread::interruption_point();
+            
+        }
+        stop();
+    }
+    void CmdValController::keyboard_stop(){
+        keyboard_stop_ = true;
+    }
+
+    void CmdValController::keyboard_speeddown(){
+        keyboard_liner_velocity_-=0.1;
+        if(keyboard_liner_velocity_<=MIN_SPEED)
+            keyboard_liner_velocity_+=0.1;
+    }
+
+    void CmdValController::keyboard_speedup(){  
+        keyboard_liner_velocity_+=0.1;
+        if(keyboard_liner_velocity_>=MAX_SPEED)
+            keyboard_liner_velocity_-=0.1;
+    }
+    
+    void CmdValController::keyboard_speeddownAnguler(){
+        keyboard_angular_velocity_-=0.1;
+        if(keyboard_angular_velocity_<=MIN_SPEED)
+            keyboard_angular_velocity_+=0.1;
+    }
+
+    void CmdValController::keyboard_speedupAnguler(){  
+        keyboard_angular_velocity_+=0.1;
+        if(keyboard_angular_velocity_>=MAX_SPEED)
+            keyboard_angular_velocity_-=0.1;
     }
 }

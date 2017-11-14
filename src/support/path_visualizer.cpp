@@ -8,7 +8,9 @@ Visualizer::Visualizer(ros::Publisher& marker_publisher,std::string vis_base_fra
 }
 
 Visualizer::~Visualizer(){
-    
+    free(marker_publisher_);    
+    free(&vis_base_frame_);
+    free(&point_array);
 }
 
 
