@@ -569,7 +569,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         pmf.setMaxWindowSize (20);
         pmf.setSlope (1.0f);
         pmf.setInitialDistance (0.1f);
-        pmf.setMaxDistance (3.0f);
+        pmf.setMaxDistance (0.2f);
         pmf.extract (ground->indices);
 
         pcl::ExtractIndices<pcl::PointXYZ> extract;
