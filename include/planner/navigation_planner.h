@@ -180,6 +180,7 @@ class NavigationPlanner{
         std::string topic_;
 
         float box_dimension_;
+        float robot_height_;
         float min_x_cordinate_;
         float max_x_cordinate_;
         float min_y_cordinate_;
@@ -203,11 +204,11 @@ class NavigationPlanner{
         void clusterObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr& object_cloud);
         int  groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud_cube,int type);
         bool planerCoefficientApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr& plane_cloud,int type);
-        int segmentBoundingCube(float x_cordinate, float y_cordinate, float z_cordinate);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr segmentBoundingCube(pcl::PointCloud<pcl::PointXYZ>::Ptr& object_cloud, float min_z_cordinate, float max_z_cordinate);
         struct Graph_Node* breadthFirstSearch(float x_cordinate,float y_cordinate,float z_cordinate);
         std::vector<geometry_msgs::PoseStamped> publishPath(struct Graph_Node *node);
-        pcl::PointCloud<pcl::PointXYZ>::Ptr calculateConvexHull(vector<pcl::PointXYZ> point_vector,int point_type);
-        pcl::PointCloud<pcl::PointXYZ>::Ptr getConvexHull(float x_cordinate, float y_cordinate, float z_cordinate, int point_type, float box_dimension);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr calculateConvexHull(pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cube, vector<pcl::PointXYZ> point_vector,int point_type);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr getConvexHull(pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cube, float x_cordinate, float y_cordinate, float z_cordinate, int point_type, float box_dimension);
         bool planeTraversabilityCheck(float a,float b,float c,float e, float x0,float y0,float z0, float d, int type);
 
     public:
@@ -218,7 +219,7 @@ class NavigationPlanner{
         int **checkNeighbourhood(const geometry_msgs::PoseStamped& pose, float box_dimension);
         void start();
         NavigationPlanner(ros::NodeHandle &nh, std::string topic);
-        NavigationPlanner(ros::NodeHandle &nh, std::string topic, float box_dimension, float min_x_cordinate, float max_x_cordinate, float min_y_cordinate, float max_y_cordinate);
+        NavigationPlanner(ros::NodeHandle &nh, std::string topic, float box_dimension,float robot_height, float min_x_cordinate, float max_x_cordinate, float min_y_cordinate, float max_y_cordinate);
         void neighbourhoodCallback(const geometry_msgs::PoseStamped& pose);
         void startTraversal(const geometry_msgs::PoseStamped& pose);
         std::vector<geometry_msgs::PoseStamped> getNavPlan(const geometry_msgs::PoseStamped& pose);
