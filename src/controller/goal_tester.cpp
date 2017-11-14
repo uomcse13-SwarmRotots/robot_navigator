@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     visualizer = new Visualizer(vis_pub,odom_link);
 
     // navigation_planner = new NavigationPlanner(nh,topic_octomap);
-    navigation_planner = new NavigationPlanner(nh,topic_octomap,0.5,0.5,-20,20,-20,20);
+    navigation_planner = new NavigationPlanner(nh,topic_octomap,0.3,0.3,-20,20,-20,20);
     navigation_planner->start();
 
     ros::NodeHandle simple_nh("move_base_simple");
