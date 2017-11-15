@@ -31,8 +31,7 @@ void push(double x,double y,std::vector<geometry_msgs::PoseStamped>& plan){
 }
 
 
-void callback(const geometry_msgs::PoseStamped& goal)
-{
+void callback(const geometry_msgs::PoseStamped& goal){
     // if(odom==NULL)
     //     ROS_INFO("pointcloud recieved______________________");
     // else
@@ -56,7 +55,27 @@ void callback(const geometry_msgs::PoseStamped& goal)
     controller->followPath(plan);
 
     //controller->achieveGoal(goal);
-    
+}
+
+void callbackGoalPlan(const geometry_msgs::PoseStamped& goal){
+
+    ROS_INFO("Came....");
+
+    tf::Stamped<tf::Pose> global_pose;
+    controller->getRobotPose(global_pose);
+    geometry_msgs::PoseStamped current_position;
+
+    tf::poseStampedTFToMsg(global_pose, current_position);
+    std::vector<geometry_msgs::PoseStamped> plan = 
+                    navigation_planner->getNavPlanToTarget(current_position,goal);
+
+    // std::vector<geometry_msgs::PoseStamped> plan;
+
+    ROS_INFO("Done planning....");
+    visualizer->showPath(plan);
+    //controller->followPath(plan);
+
+    //controller->achieveGoal(goal);
 }
 
 void testcallback(const geometry_msgs::PoseStamped& goal){
@@ -97,8 +116,8 @@ int main(int argc, char** argv)
     navigation_planner->start();
 
     ros::NodeHandle simple_nh("move_base_simple");
-    ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, callback);
-    
+    // ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, callback);
+    ros::Subscriber goal_sub_ = simple_nh.subscribe("goal", 1, callbackGoalPlan);
 
     // ros::Subscriber goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1);
     ros::spin();

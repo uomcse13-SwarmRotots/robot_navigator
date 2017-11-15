@@ -210,6 +210,8 @@ class NavigationPlanner{
         pcl::PointCloud<pcl::PointXYZ>::Ptr calculateConvexHull(pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cube, vector<pcl::PointXYZ> point_vector,int point_type);
         pcl::PointCloud<pcl::PointXYZ>::Ptr getConvexHull(pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cube, float x_cordinate, float y_cordinate, float z_cordinate, int point_type, float box_dimension);
         bool planeTraversabilityCheck(float a,float b,float c,float e, float x0,float y0,float z0, float d, int type);
+        struct Graph_Node* breadthFirstSearchToGoal(float x_cordinate, float y_cordinate, float z_cordinate, float goal_x_cordinate, float goal_y_cordinate, float goal_z_cordinate);
+        bool isRobotInside(float current_x_cordinate, float current_y_cordinate, float current_z_cordinate, float target_x_cordinate,float target_y_cordinate);
 
     public:
         /*
@@ -225,6 +227,7 @@ class NavigationPlanner{
         std::vector<geometry_msgs::PoseStamped> getNavPlan(const geometry_msgs::PoseStamped& pose);
         void cloudCallback(const PointCloud::ConstPtr& msg);
         void getFrontPlane(const geometry_msgs::PoseStamped& pose);
+        std::vector<geometry_msgs::PoseStamped> getNavPlanToTarget(const geometry_msgs::PoseStamped& pose,const geometry_msgs::PoseStamped& target);
         ~NavigationPlanner();
 };
 #endif
