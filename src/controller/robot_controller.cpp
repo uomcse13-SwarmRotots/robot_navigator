@@ -105,8 +105,11 @@ void achieveGoal(const geometry_msgs::PoseStamped& goal){
     ROS_INFO("Done planning....");
     // std::vector<geometry_msgs::PoseStamped> plan;
     
+   
     visualizer->showPath(plan);
+    ROS_INFO("Done vitualizing....");
     controller->followPath(plan);
+   
     // while(true){
     //   ROS_INFO("goal %f,%f,%f",goal.pose.position.x,goal.pose.position.y,goal.pose.position.z);
     //   boost::this_thread::interruption_point();
@@ -176,7 +179,7 @@ int main(int argc, char **argv)
   std::string topic_octomap;
 
   ros::NodeHandle private_nh("~");     
-  private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/mobile_base/commands/velocity")); 
+  private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/cmd_vel")); 
   private_nh.param("odom_topic", topic_odom, std::string("/odom")); 
   private_nh.param("base_link", base_link, std::string("base_footprint")); 
   private_nh.param("odom_link", odom_link, std::string("odom")); 
@@ -205,7 +208,8 @@ int main(int argc, char **argv)
   */
 
   controller = new swarm_navigator::CmdValController(nh,topic_cmd_val,base_link,odom_link);
-  navigation_planner = new NavigationPlanner(nh,topic_octomap);
+  navigation_planner = new NavigationPlanner(nh,topic_octomap,0.3,0.3,-20,20,-20,20);
+  navigation_planner->start();
   visualizer = new Visualizer(vis_pub,odom_link);
 
   ros::spin();

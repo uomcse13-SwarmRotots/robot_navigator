@@ -9,15 +9,12 @@ TurtlebotTeleop* turtlebot_teleop;
 
 void startKeyboardTeleop(std::string cmd_vel_topic){
     ROS_INFO("Keyboard stearing stared...");          
-    ros::NodeHandle n;
-    signal(SIGINT,quit);
-
-    boost::thread my_thread(boost::bind(&TurtlebotTeleop::keyLoop_cmd_vel, turtlebot_teleop));      
     
-    //ros::Timer timer = n.createTimer(ros::Duration(0.1), boost::bind(&TurtlebotTeleop::watchdog, &turtlebot_teleop));
-
+    boost::thread my_thread(boost::bind(&TurtlebotTeleop::keyLoop_cmd_vel, turtlebot_teleop));      
+   
     my_thread.interrupt() ;
-    my_thread.join() ;    
+    my_thread.join() ;  
+    
     ROS_INFO("Keyboard stearing ended...");
 }
 
@@ -47,7 +44,8 @@ int main(int argc, char **argv)
   std::string robot_controller_topic;
 
   ros::NodeHandle private_nh("~");     
-  private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/mobile_base/commands/velocity")); 
+  // private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/mobile_base/commands/velocity")); 
+  private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/cmd_vel"));
   private_nh.param("robot_controller_topic", robot_controller_topic, std::string("robot_controller")); 
 
   /*

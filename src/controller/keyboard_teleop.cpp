@@ -13,7 +13,7 @@ TurtlebotTeleop::TurtlebotTeleop(std::string topic):
   ph_.param("scale_linear", l_scale_, l_scale_);
 
   vel_pub_ = nh_.advertise<geometry_msgs::Twist>(topic,1,true);
-  controller_thread = NULL;
+  keyboard_controller_thread = NULL;
   state = "NONE";
 }
 
@@ -199,67 +199,67 @@ void TurtlebotTeleop::keyLoop_cmd_vel()
         ROS_DEBUG("LEFT");        
         if(state!="LEFT"){
           state = "LEFT";
-          if(controller_thread!=NULL){
-            controller_thread->interrupt();
-            free(controller_thread);
-            controller_thread = NULL;
+          if(keyboard_controller_thread!=NULL){
+            keyboard_controller_thread->interrupt();
+            free(keyboard_controller_thread);
+            keyboard_controller_thread = NULL;
           }
-          controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_left, this));          
+          keyboard_controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_left, this));          
         }        
         break;
       case KEYCODE_6:
         ROS_DEBUG("RIGHT");       
         if(state!="RIGHT"){
           state = "RIGHT";
-          if(controller_thread!=NULL){
-            controller_thread->interrupt();
-            free(controller_thread);
-            controller_thread = NULL;
+          if(keyboard_controller_thread!=NULL){
+            keyboard_controller_thread->interrupt();
+            free(keyboard_controller_thread);
+            keyboard_controller_thread = NULL;
           }
-          controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_right, this));          
+          keyboard_controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_right, this));          
         }      
         break;
       case KEYCODE_8:
         ROS_DEBUG("UP");        
         if(state!="UP"){
           state = "UP";
-          if(controller_thread!=NULL){
-            controller_thread->interrupt();
-            free(controller_thread);
-            controller_thread = NULL;
+          if(keyboard_controller_thread!=NULL){
+            keyboard_controller_thread->interrupt();
+            free(keyboard_controller_thread);
+            keyboard_controller_thread = NULL;
           }
-          controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_foward, this));          
+          keyboard_controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_foward, this));          
         }     
         break;
       case KEYCODE_2:
         ROS_DEBUG("DOWN");        
         if(state!="DOWN"){
           state = "DOWN";
-          if(controller_thread!=NULL){
-            controller_thread->interrupt();
-            free(controller_thread);
-            controller_thread = NULL;
+          if(keyboard_controller_thread!=NULL){
+            keyboard_controller_thread->interrupt();
+            free(keyboard_controller_thread);
+            keyboard_controller_thread = NULL;
           }
-          controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_backward, this));          
+          keyboard_controller_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyboard_backward, this));          
         }     
         break;
       case KEYCODE_5:
         ROS_DEBUG("STOP");  
         if(state!="STOP"){         
           state = "STOP";
-          if(controller_thread!=NULL){
-            controller_thread->interrupt();
-            free(controller_thread);
-            controller_thread = NULL;
+          if(keyboard_controller_thread!=NULL){
+            keyboard_controller_thread->interrupt();
+            free(keyboard_controller_thread);
+            keyboard_controller_thread = NULL;
           }         
           keyboard_stop();
         }
         break;
       case KEYCODE_Q:
         puts("Exit keyboard teleop");
-        if(controller_thread!=NULL){
-          controller_thread->interrupt();
-          free(controller_thread);
+        if(keyboard_controller_thread!=NULL){
+          keyboard_controller_thread->interrupt();
+          free(keyboard_controller_thread);
         }  
         stop = true;
         break;     
