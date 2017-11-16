@@ -58,6 +58,8 @@
 #include <pcl/surface/convex_hull.h>
 #include <visualization_msgs/Marker.h>
 #include <cmath>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
 
 const float  PI_F=3.14159265358979f;
 typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
