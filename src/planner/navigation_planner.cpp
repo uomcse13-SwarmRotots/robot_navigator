@@ -163,6 +163,8 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
             std::cout<< "un-traversable o" << endl;
             return false;
             break;
+        default:
+            return false;
     }
 
 }
@@ -583,7 +585,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         pmf.setMaxWindowSize (20);
         pmf.setSlope (1.0f);
         pmf.setInitialDistance (0.1f);
-        pmf.setMaxDistance (2.0f);
+        pmf.setMaxDistance (0.5f);
         pmf.extract (ground->indices);
 
         pcl::ExtractIndices<pcl::PointXYZ> extract;
