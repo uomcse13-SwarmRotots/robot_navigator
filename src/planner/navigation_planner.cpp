@@ -164,7 +164,13 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
             return false;
             break;
         default:
+<<<<<<< HEAD
             return false;
+=======
+            std::cout<< "un-traversable for case 2,4,6,8" << endl;
+            return false;
+            break;
+>>>>>>> 0fe8f1dd7348ec9bd1cbcb9d267d4003b3383296
     }
 
 }
