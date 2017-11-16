@@ -80,27 +80,30 @@ void Visualizer::showPath(std::vector<geometry_msgs::PoseStamped>& plan){
     line_list.color.b = 1.0;
     line_list.color.a = 1.0;
 
-    for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end ()-1; 
-        it != plan.begin (); --it){
+    if(!plan.empty()){
+        ROS_INFO("Not Empty");
+        for (std::vector<geometry_msgs::PoseStamped>::const_iterator it = plan.end ()-1; 
+            it != plan.begin (); --it){
 
-        geometry_msgs::Point p;
-        p.x = (*it).pose.position.x;
-        p.y = (*it).pose.position.y;
-        p.z = (*it).pose.position.z;
+            geometry_msgs::Point p;
+            p.x = (*it).pose.position.x;
+            p.y = (*it).pose.position.y;
+            p.z = (*it).pose.position.z;
 
-        points.points.push_back(p);
-        line_strip.points.push_back(p);
+            points.points.push_back(p);
+            line_strip.points.push_back(p);
 
-        // The line list needs two points for each line
-        line_list.points.push_back(p);
-        p.z += 1.0;
-        line_list.points.push_back(p);
-        //ros::Duration(0.5).sleep(); 
+            // The line list needs two points for each line
+            line_list.points.push_back(p);
+            p.z += 1.0;
+            line_list.points.push_back(p);
+            //ros::Duration(0.5).sleep(); 
+        }
+
+        marker_publisher_.publish(points);
+        marker_publisher_.publish(line_strip);
+        marker_publisher_.publish(line_list);
     }
-
-    marker_publisher_.publish(points);
-    marker_publisher_.publish(line_strip);
-    marker_publisher_.publish(line_list);
 
 }
 
