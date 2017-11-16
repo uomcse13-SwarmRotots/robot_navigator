@@ -1374,25 +1374,28 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
 std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Graph_Node *node){
     ros::NodeHandle n;
     ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
-    struct Graph_Node *temp_node = node;
-    geometry_msgs::PoseStamped pose;
     std::vector<geometry_msgs::PoseStamped> plan;
-    struct Graph_Node *temp_node1 = temp_node;
-    while(temp_node1!=NULL){
-
-        pose.pose.position.x = temp_node1->x_cordinate;
-        pose.pose.position.y = temp_node1->y_cordinate;
-        pose.pose.position.z = temp_node1->marker_z_cordinate;
-        pose.pose.orientation.x = 0.0;
-        pose.pose.orientation.y = 0.0;
-        pose.pose.orientation.z = 0.0;
-        pose.pose.orientation.w = 0.0;
-        ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->marker_z_cordinate);
-        plan.push_back(pose);    
-        temp_node1 = temp_node1->predecessor;
+    if(node == NULL){
+        ROS_INFO("NO PATH PLANNED");
+    }else{    
+        struct Graph_Node *temp_node = node;
+        geometry_msgs::PoseStamped pose;
+        struct Graph_Node *temp_node1 = temp_node;
+        while(temp_node1!=NULL){
+            pose.pose.position.x = temp_node1->x_cordinate;
+            pose.pose.position.y = temp_node1->y_cordinate;
+            pose.pose.position.z = temp_node1->marker_z_cordinate;
+            pose.pose.orientation.x = 0.0;
+            pose.pose.orientation.y = 0.0;
+            pose.pose.orientation.z = 0.0;
+            pose.pose.orientation.w = 0.0;
+            ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->marker_z_cordinate);
+            plan.push_back(pose);    
+            temp_node1 = temp_node1->predecessor;
+        }
+        current_node=NULL;
+        ROS_INFO("PATH PLANNED");
     }
-    current_node=NULL;
-    ROS_INFO("PATH PLANNED");
     return plan;
   
 }
