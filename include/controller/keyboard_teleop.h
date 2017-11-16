@@ -46,7 +46,7 @@ private:
 
   double speed;
   double speed_anguler;
-  boost::thread* controller_thread; 
+  boost::thread* keyboard_controller_thread; 
   std::string state;
 
   void speedup();

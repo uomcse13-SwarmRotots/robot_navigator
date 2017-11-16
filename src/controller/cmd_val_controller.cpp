@@ -120,7 +120,8 @@ namespace swarm_navigator {
                                         ros::Time(0), current_transform);
             }
             catch (tf::TransformException ex)
-            {boost::this_thread::interruption_point();
+            {
+                boost::this_thread::interruption_point();
                 ROS_ERROR("%s",ex.what());
                 break;
             }
@@ -182,8 +183,9 @@ namespace swarm_navigator {
             }
             catch (tf::TransformException ex)
             {
-            ROS_ERROR("%s",ex.what());
-            break;
+                boost::this_thread::interruption_point();
+                ROS_ERROR("%s",ex.what());
+                break;
             }
             tf::Transform relative_transform = 
             start_transform.inverse() * current_transform;
