@@ -164,13 +164,7 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
             return false;
             break;
         default:
-<<<<<<< HEAD
             return false;
-=======
-            std::cout<< "un-traversable for case 2,4,6,8" << endl;
-            return false;
-            break;
->>>>>>> 0fe8f1dd7348ec9bd1cbcb9d267d4003b3383296
     }
 
 }
@@ -591,7 +585,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         pmf.setMaxWindowSize (20);
         pmf.setSlope (1.0f);
         pmf.setInitialDistance (0.1f);
-        pmf.setMaxDistance (0.5f);
+        pmf.setMaxDistance (3.0f);
         pmf.extract (ground->indices);
 
         pcl::ExtractIndices<pcl::PointXYZ> extract;
@@ -678,10 +672,7 @@ NavigationPlanner::NavigationPlanner(ros::NodeHandle &nh, std::string topic, flo
     
 }
 
-
 NavigationPlanner::~NavigationPlanner(){}
-
-
 
 struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, float y_cordinate, float z_cordinate){
 
@@ -689,6 +680,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
     current_y_node = y_cordinate;
     current_z_node = z_cordinate;
 
+    boost::this_thread::interruption_point();
     
     if(min_x_cordinate_<x_cordinate && max_x_cordinate_>x_cordinate && min_y_cordinate_<y_cordinate && max_y_cordinate_>y_cordinate){
         pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
@@ -1007,8 +999,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         node_queue.pop();
         //ROS_INFO("Started Braeadth Search");
         current_node=next_node;
-        breadthFirstSearch(next_node->x_cordinate,next_node->y_cordinate,next_node->z_cordinate);
-        return current_node;
+        return breadthFirstSearch(next_node->x_cordinate,next_node->y_cordinate,next_node->z_cordinate);
     }    
 } 
 
@@ -1040,7 +1031,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
                     //ROS_INFO("Return on 1");
                     //return current_node;
                 }else if(result == 1){
-
+                    //ROS_INFO("ok 1");
                     struct Graph_Node *temp_node = new Graph_Node;
                     temp_node->x_cordinate = front_x;
                     temp_node->y_cordinate = front_y;
@@ -1375,9 +1366,8 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         node_queue.pop();
         //ROS_INFO("Started Braeadth Search");
         current_node=next_node;
-        breadthFirstSearchToGoal(next_node->x_cordinate,next_node->y_cordinate,next_node->z_cordinate,target_x_cordinate,target_y_cordinate,target_z_cordinate);
-        ROS_INFO("Returned Braeadth Goal Search");
-        return current_node;
+        return breadthFirstSearchToGoal(next_node->x_cordinate,next_node->y_cordinate,next_node->z_cordinate,target_x_cordinate,target_y_cordinate,target_z_cordinate);
+        //ROS_INFO("Returned Braeadth Goal Search");
     }    
 } 
 
