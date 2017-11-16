@@ -20,7 +20,7 @@
 swarm_navigator::CmdValController* controller;
 NavigationPlanner* navigation_planner;
 Visualizer* visualizer;
-
+bool isGoalTesting = false;
 /*
 ----subcribers----------------------------------
 */
@@ -46,26 +46,27 @@ boost::thread* controller_thread = NULL;
 
 void autoDrive(){
   // stop = false;
-  while(true){
-    controller->driveForward(10);
-  }
-
   // while(true){
-  //     // get robot pose
-  //     tf::Stamped<tf::Pose> global_pose;
-  //     controller->getRobotPose(global_pose);
-  //     geometry_msgs::PoseStamped current_position;
-  //     tf::poseStampedTFToMsg(global_pose, current_position);
+  //   controller->driveForward(10);
+  // }
 
-  //     //get plan
-  //     std::vector<geometry_msgs::PoseStamped> plan = 
-  //                     navigation_planner->getNavPlan(current_position);
-  //     ROS_INFO("Done planning....");
+  while(true){
+      // get robot pose
+      tf::Stamped<tf::Pose> global_pose;
+      controller->getRobotPose(global_pose);
+      geometry_msgs::PoseStamped current_position;
+      tf::poseStampedTFToMsg(global_pose, current_position);
+
+      //get plan
+      ROS_INFO("Start planning....");
+      std::vector<geometry_msgs::PoseStamped> plan = 
+                      navigation_planner->getNavPlan(current_position);
+      ROS_INFO("Done planning....");
 
       
-  //     visualizer->showPath(plan);
-  //     controller->followPath(plan);
-  // }
+      visualizer->showPath(plan);
+      controller->followPath(plan);
+  }
 }
 
 void rotateRobot(){
@@ -79,6 +80,7 @@ void rotateRobot(){
 }
 
 void stop(){
+  isGoalTesting = false;
   if(controller_thread!=NULL){
     controller_thread->interrupt();
     free(controller_thread);
@@ -87,6 +89,29 @@ void stop(){
   controller->stop();
 }
 
+void achieveGoal(const geometry_msgs::PoseStamped& goal){
+    ROS_INFO("Goal Came....");    
+
+    tf::Stamped<tf::Pose> global_pose;
+    controller->getRobotPose(global_pose);
+    geometry_msgs::PoseStamped current_position;
+
+    tf::poseStampedTFToMsg(global_pose, current_position);
+
+    //get plan
+    ROS_INFO("Start planning....");
+    std::vector<geometry_msgs::PoseStamped> plan = 
+                    navigation_planner->getNavPlanToTarget(current_position,goal);
+    ROS_INFO("Done planning....");
+    // std::vector<geometry_msgs::PoseStamped> plan;
+    
+    visualizer->showPath(plan);
+    controller->followPath(plan);
+    // while(true){
+    //   ROS_INFO("goal %f,%f,%f",goal.pose.position.x,goal.pose.position.y,goal.pose.position.z);
+    //   boost::this_thread::interruption_point();
+    // }
+}
 
 
 /*
@@ -97,9 +122,11 @@ void controlCallback(const std_msgs::String::ConstPtr& msg){
 
   ROS_INFO("I heard: [%s]", msg->data.c_str());
   if(msg->data=="auto"){
+    stop();
     if(controller_thread==NULL)
       controller_thread = new boost::thread(boost::bind(autoDrive));
-  }else if(msg->data=="stop"){
+  }
+  else if(msg->data=="stop"){
     stop();
   }
   else if(msg->data=="rotate"){
@@ -107,12 +134,29 @@ void controlCallback(const std_msgs::String::ConstPtr& msg){
     if(controller_thread==NULL)
       controller_thread = new boost::thread(boost::bind(rotateRobot));
   }
+  else if(msg->data=="goal"){
+    stop();
+    isGoalTesting = true;
+  }
   //   else if(msg->data=="exit"){
   //   exit(0);
   // }
 
 }
 
+void goalTestCallback(const geometry_msgs::PoseStamped& goal)
+{  
+  if(isGoalTesting){  
+    if(controller_thread!=NULL){
+      controller_thread->interrupt();
+      free(controller_thread);
+    }
+    controller_thread = NULL;
+    controller->stop();
+    if(controller_thread==NULL)
+      controller_thread = new boost::thread(boost::bind(achieveGoal,goal));
+  }
+}
 
 
 int main(int argc, char **argv)
@@ -121,7 +165,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "robot_controller");
   ros::NodeHandle nh;
   ros::NodeHandle simple_nh("move_base_simple");
-
+  
   /*
     Patameters-----------------------------
   */
@@ -141,12 +185,14 @@ int main(int argc, char **argv)
   /*
   ------------------------------------------
   */
+  
+   
 
   /*
   ----subcribers----------------------------
   */
   robot_controller_sub = nh.subscribe("robot_controller", 1000, controlCallback);  
-  //goal_sub = simple_nh.subscribe("goal", 1, callback);
+  goal_sub = simple_nh.subscribe("goal", 1, goalTestCallback);
 
   /*
   ----publishers----------------------------

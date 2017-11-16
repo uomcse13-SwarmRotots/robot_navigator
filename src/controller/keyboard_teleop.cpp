@@ -21,7 +21,12 @@ TurtlebotTeleop::TurtlebotTeleop(std::string topic):
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "turtlebot_teleop");
-  TurtlebotTeleop turtlebot_teleop("/cmd_vel");
+
+  std::string cmd_vel_topic;
+
+  ros::NodeHandle private_nh("~");     
+  private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/cmd_vel"));
+  TurtlebotTeleop turtlebot_teleop(cmd_vel_topic);
   ros::NodeHandle n;
 
   signal(SIGINT,quit);

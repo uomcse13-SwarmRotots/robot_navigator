@@ -120,7 +120,7 @@ namespace swarm_navigator {
                                         ros::Time(0), current_transform);
             }
             catch (tf::TransformException ex)
-            {
+            {boost::this_thread::interruption_point();
                 ROS_ERROR("%s",ex.what());
                 break;
             }
