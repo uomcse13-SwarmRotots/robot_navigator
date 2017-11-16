@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     private_nh.param("odom_topic", topic_odom, std::string("/odom")); 
     private_nh.param("base_link", base_link, std::string("base_footprint")); 
     private_nh.param("odom_link", odom_link, std::string("odom")); 
-    private_nh.param("topic_octomap",topic_octomap, std::string("/octomap_point_cloud_centers"));
+    private_nh.param("topic_octomap",topic_octomap, std::string("/rtabmap/cloud_map"));
 
     controller = new swarm_navigator::CmdValController(nh,topic_cmd_val,base_link,odom_link);
     
