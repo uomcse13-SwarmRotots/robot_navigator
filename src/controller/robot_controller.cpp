@@ -79,6 +79,7 @@ void rotateRobot(){
 
 void stop(){
   isGoalTesting = false;
+  isDirectGoalTesting = false;
   if(controller_thread!=NULL){
     controller_thread->interrupt();
     free(controller_thread);
@@ -110,7 +111,7 @@ void achieveGoal(const geometry_msgs::PoseStamped& goal){
 }
 
 void achieveDirectGoal(const geometry_msgs::PoseStamped& goal){
-    ROS_INFO("Direct Goal Came....");    
+    ROS_INFO("Direct Goal Came....");   
 
     controller->achieveGoal(goal);
    
