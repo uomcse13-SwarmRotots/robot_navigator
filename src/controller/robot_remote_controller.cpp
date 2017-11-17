@@ -71,13 +71,14 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(10);
  
   int count = 0;
+  std::string mode = "basic mode           ";
   while (ros::ok())
   {
    
     std_msgs::String msg;
 
-    std::string mode = "";
-    std::cout << mode <<" - robot controller: ";
+    
+    std::cout << mode << "-" <<"robot controller: ";
     std::cin >> msg.data;    
 
     if(msg.data=="exit")
@@ -90,13 +91,13 @@ int main(int argc, char **argv)
         system("rqt");
     else{
         if(msg.data=="stop")
-          mode = "";
+          mode = "basic mode           ";
         else if(msg.data=="goal")
-          mode = "goal mode";
+          mode = "goal mode            ";
         else if(msg.data=="dgoal")
-          mode = "direct goal mode";
+          mode = "direct goal mode     ";
         else if(msg.data=="auto")
-          mode = "auto navigation mode";
+          mode = "auto navigation mode ";
         chatter_pub.publish(msg);
         ros::spinOnce();
         loop_rate.sleep();
