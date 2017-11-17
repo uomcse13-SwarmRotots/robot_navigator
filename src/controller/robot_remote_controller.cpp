@@ -49,8 +49,8 @@ int main(int argc, char **argv)
   std::string robot_controller_topic;
 
   ros::NodeHandle private_nh("~");     
-  // private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/mobile_base/commands/velocity")); 
-  private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/cmd_vel"));
+  private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/mobile_base/commands/velocity")); 
+  // private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/cmd_vel"));
   private_nh.param("robot_controller_topic", robot_controller_topic, std::string("robot_controller")); 
 
   /*
@@ -71,13 +71,14 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(10);
  
   int count = 0;
+  std::string mode = "basic mode           ";
   while (ros::ok())
   {
    
     std_msgs::String msg;
 
-    std::stringstream ss;
-    std::cout << "robot controller: ";
+    
+    std::cout << mode << "-" <<"robot controller: ";
     std::cin >> msg.data;    
 
     if(msg.data=="exit")
@@ -89,6 +90,14 @@ int main(int argc, char **argv)
     else if(msg.data=="rqt")
         system("rqt");
     else{
+        if(msg.data=="stop")
+          mode = "basic mode           ";
+        else if(msg.data=="goal")
+          mode = "goal mode            ";
+        else if(msg.data=="dgoal")
+          mode = "direct goal mode     ";
+        else if(msg.data=="auto")
+          mode = "auto navigation mode ";
         chatter_pub.publish(msg);
         ros::spinOnce();
         loop_rate.sleep();

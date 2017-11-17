@@ -1,6 +1,6 @@
 <launch>   
 
-    <node name="keyboard_teleop" pkg="robot_navigator" type="keyboard_teleop">
+    <node name="keyboard_teleop" pkg="robot_navigator" type="keyboard_teleop" output="screen">
         <!-- <param name="cmd_vel_topic" type="string" value="/cmd_vel" /> -->
         <param name="cmd_vel_topic" type="string" value="/mobile_base/commands/velocity" />
     </node>

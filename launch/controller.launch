@@ -1,15 +1,25 @@
 <launch>   
 
-    <node name="robot_controller" pkg="robot_navigator" type="robot_controller">
+    <node name="robot_controller" pkg="robot_navigator" type="robot_controller" output="screen">
         <param name="cmd_vel_topic" type="string" value="/cmd_vel" />
         <!-- <param name="cmd_vel_topic" type="string" value="/mobile_base/commands/velocity" /> -->
         <param name="odom_topic" type="string" value="/odom" />
         <param name="base_link" type="string" value="base_footprint" />
         <param name="odom_link" type="string" value="odom" />
         <param name="topic_octomap" type="string" value="/octomap_point_cloud_centers" />
-        <param name="robot_dimention_width" type="string" value="0.5" />
-        <param name="robot_dimention_height" type="string" value="0.5" />
-        
+        <param name="robot_dimention_width" type="double" value="0.5" />
+        <param name="robot_dimention_height" type="double" value="0.5" />
+        <param name="robot_area_x_min" type="int" value="-20" />
+        <param name="robot_area_x_max" type="int" value="20" />
+        <param name="robot_area_y_min" type="int" value="-20" />
+        <param name="robot_area_y_max" type="int" value="20" />
+
+        <param name="window_size" type="int" value="20" />
+        <param name="min_distance" type="double" value="0.1" />
+        <param name="max_distance" type="double" value="3.0" />
+        <param name="min_slope" type="double" value="0.1" />
+
+
     </node>
     
 </launch>

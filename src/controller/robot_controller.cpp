@@ -61,9 +61,10 @@ void autoDrive(){
                       navigation_planner->getNavPlan(current_position);
       ROS_INFO("Done planning....");
 
-      
-      visualizer->showPath(plan);
-      controller->followPath(plan);
+      if(!plan.empty()){
+        visualizer->showPath(plan);
+        controller->followPath(plan);
+      }
   }
 }
 
@@ -104,17 +105,17 @@ void achieveGoal(const geometry_msgs::PoseStamped& goal){
     ROS_INFO("Done planning....");
     // std::vector<geometry_msgs::PoseStamped> plan;    
    
-    visualizer->showPath(plan);
-    ROS_INFO("Done vitualizing....");
-    controller->followPath(plan);
+    if(!plan.empty()){
+      visualizer->showPath(plan);
+      ROS_INFO("Done vitualizing....");
+      controller->followPath(plan);
+    }
    
 }
 
 void achieveDirectGoal(const geometry_msgs::PoseStamped& goal){
-    ROS_INFO("Direct Goal Came....");   
-
-    controller->achieveGoal(goal);
-   
+    ROS_INFO("Direct Goal Came....");
+    controller->achieveGoal(goal);   
 }
 
 
@@ -191,8 +192,17 @@ int main(int argc, char **argv)
   std::string base_link;
   std::string odom_link;
   std::string topic_octomap;
-  std::string robot_dimention_width;
-  std::string robot_dimention_height;
+  double robot_dimention_width;
+  double robot_dimention_height;
+  int robot_area_x_min;
+  int robot_area_x_max;
+  int robot_area_y_min;
+  int robot_area_y_max;
+
+  int window_size;
+  double min_distance;
+  double max_distance;
+  double min_slope;
 
   ros::NodeHandle private_nh("~");     
   private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/cmd_vel")); 
@@ -200,8 +210,17 @@ int main(int argc, char **argv)
   private_nh.param("base_link", base_link, std::string("base_footprint")); 
   private_nh.param("odom_link", odom_link, std::string("odom")); 
   private_nh.param("topic_octomap",topic_octomap, std::string("/octomap_point_cloud_centers"));
-  private_nh.param("robot_dimention_width",robot_dimention_width, std::string("0.3"));
-  private_nh.param("robot_dimention_height",robot_dimention_height, std::string("0.3"));
+  private_nh.param("robot_dimention_width",robot_dimention_width, 0.3);
+  private_nh.param("robot_dimention_height",robot_dimention_height, 0.3);
+  private_nh.param("robot_area_x_min",robot_area_x_min, -20);
+  private_nh.param("robot_area_x_max",robot_area_x_max, 20);
+  private_nh.param("robot_area_y_min",robot_area_y_min, -20);
+  private_nh.param("robot_area_y_max",robot_area_y_max, 20);
+
+  private_nh.param("window_size",window_size, 20);
+  private_nh.param("min_distance",min_distance, 0.1);
+  private_nh.param("max_distance",max_distance, 3.0);
+  private_nh.param("min_slope",min_slope, 0.1);
 
   /*
   ------------------------------------------
@@ -225,11 +244,12 @@ int main(int argc, char **argv)
   ------------------------------------------
   */
 
-  float width = atof (robot_dimention_width.c_str());
-  float height = atof (robot_dimention_height.c_str());
-  ROS_INFO("%f, %f",width,height);
+
+  
   controller = new swarm_navigator::CmdValController(nh,topic_cmd_val,base_link,odom_link);
-  navigation_planner = new NavigationPlanner(nh,topic_octomap,width,height,-20,20,-20,20);
+  navigation_planner = new NavigationPlanner(nh,topic_octomap,robot_dimention_width
+        ,robot_dimention_height,robot_area_x_min,robot_area_x_max,robot_area_y_min,robot_area_y_max);
+  navigation_planner->setParametersForground(min_slope,min_distance,max_distance,window_size);
   navigation_planner->start();
   visualizer = new Visualizer(vis_pub,odom_link);
 
