@@ -162,7 +162,7 @@ void TurtlebotTeleop::keyLoop()
 void TurtlebotTeleop::keyLoop_cmd_vel()
 {
   char c;
-  bool stop = false;
+  
 
   // get the console in raw mode                                                              
   tcgetattr(kfd, &cooked);
@@ -180,7 +180,7 @@ void TurtlebotTeleop::keyLoop_cmd_vel()
   puts("Use key Q to exit the keyboard stearing.");
 
 
-  while (ros::ok()&&!stop)
+  while (ros::ok())
   {
     // get the next event from the keyboard  
     if(read(kfd, &c, 1) < 0)
@@ -260,9 +260,10 @@ void TurtlebotTeleop::keyLoop_cmd_vel()
         if(keyboard_controller_thread!=NULL){
           keyboard_controller_thread->interrupt();
           free(keyboard_controller_thread);
+          keyboard_controller_thread = NULL;
         }  
-        stop = true;
-        break;     
+        tcsetattr(0, TCSANOW, &cooked);
+        return;     
       case KEYCODE_3:        
         speeddown();
         break;

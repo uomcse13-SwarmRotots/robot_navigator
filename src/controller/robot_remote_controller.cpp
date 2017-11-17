@@ -5,16 +5,19 @@
 #include <sstream>
 #include <iostream>
 
-TurtlebotTeleop* turtlebot_teleop; 
+TurtlebotTeleop* turtlebot_teleop;
 
 void startKeyboardTeleop(std::string cmd_vel_topic){
+
     ROS_INFO("Keyboard stearing stared...");          
     
-    boost::thread my_thread(boost::bind(&TurtlebotTeleop::keyLoop_cmd_vel, turtlebot_teleop));      
+    //boost::thread* my_thread = new boost::thread(boost::bind(&TurtlebotTeleop::keyLoop_cmd_vel, turtlebot_teleop));      
    
-    my_thread.interrupt() ;
-    my_thread.join() ;  
-    
+    //my_thread->interrupt();
+    //my_thread->join();  
+    //my_thread->interrupt();
+    //free(my_thread);
+    turtlebot_teleop->keyLoop_cmd_vel();
     ROS_INFO("Keyboard stearing ended...");
 }
 
@@ -27,6 +30,8 @@ void showHelp(){
   ROS_INFO("auto - automate robot navigation");  
   ROS_INFO("rotate - rotate the robot");
   ROS_INFO("stop - stop automate robot navigation,rotation");
+  ROS_INFO("goal - goal testing");
+  ROS_INFO("dgoal - direct goal testing");
   ROS_INFO("------Robot contoller-----");
 
 }

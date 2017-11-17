@@ -37,7 +37,7 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
     float angle_x = acos(a2_);
     float angle_y = acos(b2_);
     float angle_z = acos(c2_);
-    // float z;
+    float z;
 	//Print angle	
     float acceptedAngle 	= 0.523599; // 30 degree
     float acceptedAngle90  = 1.39626; // 80 degree
@@ -61,6 +61,8 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
 
     switch(type){
         case 1:
+	    z = (-1*e - a*(x0+d) -b*y0)/c;
+	    std::cout << "New Z" << z << "Z diff " << z - z0 << endl;
             if(angle_y>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
@@ -89,6 +91,8 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
             return false;
             break;
         case 3:
+	    z = (-1*e - a*x0 -b*(y0+d))/c;
+	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
             if(angle_x>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
@@ -117,6 +121,8 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
             return false;
             break;
         case 5:
+	    z = (-1*e - a*(x0-d) -b*y0)/c;
+	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
             if(angle_y>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
@@ -145,6 +151,8 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
             return false;
             break;
         case 7:
+	    z = (-1*e - a*x0 -b*(y0-d))/c;
+	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
             if(angle_x>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
@@ -172,6 +180,22 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
             std::cout<< "un-traversable o" << endl;
             return false;
             break;
+        case 2:
+	    z = (-1*e - a*(x0+d) -b*(y0+d))/c;
+	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
+	    return false;
+        case 4:
+	    z = (-1*e - a*(x0-d) -b*(y0+d))/c;
+	    std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+	    return false;
+        case 6:
+	    z = (-1*e - a*(x0-d) -b*(y0-d))/c;
+	    std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+	    return false;
+        case 8:
+	    z = (-1*e - a*(x0+d) -b*(y0-d))/c;
+	    std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+	    return false;
         default:
             return false;
     }
@@ -1433,7 +1457,7 @@ void NavigationPlanner::getFrontPlane(const geometry_msgs::PoseStamped& pose){
     z_cordinate = pose.pose.position.z;
     pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud2;
     convex_cloud2 = getConvexHull(surrounding_cloud,x_cordinate,y_cordinate,z_cordinate,8,box_dimension_);        
-    result = groundNonGroundExtraction(convex_cloud2, 3);
+    result = groundNonGroundExtraction(convex_cloud2, 2);
     ROS_INFO("%d",result);
     std::cout << "----3------" << std::endl;
     x_cordinate = pose.pose.position.x;
@@ -1441,7 +1465,7 @@ void NavigationPlanner::getFrontPlane(const geometry_msgs::PoseStamped& pose){
     z_cordinate = pose.pose.position.z;
     pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud3;
     convex_cloud3 = getConvexHull(surrounding_cloud,x_cordinate,y_cordinate,z_cordinate,8,box_dimension_);        
-    result = groundNonGroundExtraction(convex_cloud3, 5);
+    result = groundNonGroundExtraction(convex_cloud3, 3);
     ROS_INFO("%d",result);
     std::cout << "----4------" << std::endl;
     x_cordinate = pose.pose.position.x-1.0;
@@ -1449,8 +1473,41 @@ void NavigationPlanner::getFrontPlane(const geometry_msgs::PoseStamped& pose){
     z_cordinate = pose.pose.position.z;
     pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud4;
     convex_cloud4 = getConvexHull(surrounding_cloud,x_cordinate,y_cordinate,z_cordinate,8,box_dimension_);        
-    result = groundNonGroundExtraction(convex_cloud4, 7);
+    result = groundNonGroundExtraction(convex_cloud4, 4);
     ROS_INFO("%d",result);
+    std::cout << "----5------" << std::endl;
+    x_cordinate = pose.pose.position.x-1.0;
+    y_cordinate = pose.pose.position.y;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud5;
+    convex_cloud4 = getConvexHull(surrounding_cloud,x_cordinate,y_cordinate,z_cordinate,8,box_dimension_);        
+    result = groundNonGroundExtraction(convex_cloud5, 5);
+    ROS_INFO("%d",result);
+    std::cout << "----6------" << std::endl;
+    x_cordinate = pose.pose.position.x-1.0;
+    y_cordinate = pose.pose.position.y-1.0;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud6;
+    convex_cloud4 = getConvexHull(surrounding_cloud,x_cordinate,y_cordinate,z_cordinate,8,box_dimension_);        
+    result = groundNonGroundExtraction(convex_cloud6, 6);
+    ROS_INFO("%d",result);
+    std::cout << "----7------" << std::endl;
+    x_cordinate = pose.pose.position.x;
+    y_cordinate = pose.pose.position.y-1.0;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud7;
+    convex_cloud4 = getConvexHull(surrounding_cloud,x_cordinate,y_cordinate,z_cordinate,8,box_dimension_);        
+    result = groundNonGroundExtraction(convex_cloud7, 7);
+    ROS_INFO("%d",result);
+    std::cout << "----8------" << std::endl;
+    x_cordinate = pose.pose.position.x+1.0;
+    y_cordinate = pose.pose.position.y-1.0;
+    z_cordinate = pose.pose.position.z;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud8;
+    convex_cloud4 = getConvexHull(surrounding_cloud,x_cordinate,y_cordinate,z_cordinate,8,box_dimension_);        
+    result = groundNonGroundExtraction(convex_cloud8, 8);
+    ROS_INFO("%d",result);
+
 }
 
 std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlan(const geometry_msgs::PoseStamped& pose){
