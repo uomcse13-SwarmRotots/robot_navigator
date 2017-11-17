@@ -30,6 +30,8 @@ void showHelp(){
   ROS_INFO("auto - automate robot navigation");  
   ROS_INFO("rotate - rotate the robot");
   ROS_INFO("stop - stop automate robot navigation,rotation");
+  ROS_INFO("goal - goal testing");
+  ROS_INFO("dgoal - direct goal testing");
   ROS_INFO("------Robot contoller-----");
 
 }

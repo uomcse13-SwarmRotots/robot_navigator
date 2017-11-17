@@ -7,6 +7,7 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <ros/ros.h>
+#include <stdlib.h> 
 
 #include <controller/cmd_val_controller.h>
 #include <planner/navigation_planner.h>
@@ -21,6 +22,7 @@ swarm_navigator::CmdValController* controller;
 NavigationPlanner* navigation_planner;
 Visualizer* visualizer;
 bool isGoalTesting = false;
+bool isDirectGoalTesting = false;
 /*
 ----subcribers----------------------------------
 */
@@ -45,11 +47,7 @@ boost::thread* controller_thread = NULL;
 */
 
 void autoDrive(){
-  // stop = false;
-  // while(true){
-  //   controller->driveForward(10);
-  // }
-
+  
   while(true){
       // get robot pose
       tf::Stamped<tf::Pose> global_pose;
@@ -103,17 +101,19 @@ void achieveGoal(const geometry_msgs::PoseStamped& goal){
     std::vector<geometry_msgs::PoseStamped> plan = 
                     navigation_planner->getNavPlanToTarget(current_position,goal);
     ROS_INFO("Done planning....");
-    // std::vector<geometry_msgs::PoseStamped> plan;
-    
+    // std::vector<geometry_msgs::PoseStamped> plan;    
    
     visualizer->showPath(plan);
     ROS_INFO("Done vitualizing....");
     controller->followPath(plan);
    
-    // while(true){
-    //   ROS_INFO("goal %f,%f,%f",goal.pose.position.x,goal.pose.position.y,goal.pose.position.z);
-    //   boost::this_thread::interruption_point();
-    // }
+}
+
+void achieveDirectGoal(const geometry_msgs::PoseStamped& goal){
+    ROS_INFO("Direct Goal Came....");    
+
+    controller->achieveGoal(goal);
+   
 }
 
 
@@ -141,6 +141,10 @@ void controlCallback(const std_msgs::String::ConstPtr& msg){
     stop();
     isGoalTesting = true;
   }
+  else if(msg->data=="dgoal"){
+    stop();
+    isDirectGoalTesting = true;
+  }
   //   else if(msg->data=="exit"){
   //   exit(0);
   // }
@@ -158,6 +162,15 @@ void goalTestCallback(const geometry_msgs::PoseStamped& goal)
     controller->stop();
     if(controller_thread==NULL)
       controller_thread = new boost::thread(boost::bind(achieveGoal,goal));
+  }else if(isDirectGoalTesting){    
+    if(controller_thread!=NULL){
+      controller_thread->interrupt();
+      free(controller_thread);
+    }
+    controller_thread = NULL;
+    controller->stop();
+    if(controller_thread==NULL)
+      controller_thread = new boost::thread(boost::bind(achieveDirectGoal,goal));
   }
 }
 
@@ -177,6 +190,8 @@ int main(int argc, char **argv)
   std::string base_link;
   std::string odom_link;
   std::string topic_octomap;
+  std::string robot_dimention_width;
+  std::string robot_dimention_height;
 
   ros::NodeHandle private_nh("~");     
   private_nh.param("cmd_vel_topic", topic_cmd_val, std::string("/cmd_vel")); 
@@ -184,6 +199,8 @@ int main(int argc, char **argv)
   private_nh.param("base_link", base_link, std::string("base_footprint")); 
   private_nh.param("odom_link", odom_link, std::string("odom")); 
   private_nh.param("topic_octomap",topic_octomap, std::string("/octomap_point_cloud_centers"));
+  private_nh.param("robot_dimention_width",robot_dimention_width, std::string("0.3"));
+  private_nh.param("robot_dimention_height",robot_dimention_height, std::string("0.3"));
 
   /*
   ------------------------------------------
@@ -207,8 +224,11 @@ int main(int argc, char **argv)
   ------------------------------------------
   */
 
+  float width = atof (robot_dimention_width.c_str());
+  float height = atof (robot_dimention_height.c_str());
+  ROS_INFO("%f, %f",width,height);
   controller = new swarm_navigator::CmdValController(nh,topic_cmd_val,base_link,odom_link);
-  navigation_planner = new NavigationPlanner(nh,topic_octomap,0.3,0.3,-20,20,-20,20);
+  navigation_planner = new NavigationPlanner(nh,topic_octomap,width,height,-20,20,-20,20);
   navigation_planner->start();
   visualizer = new Visualizer(vis_pub,odom_link);
 

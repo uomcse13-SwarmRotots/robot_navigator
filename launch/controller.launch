@@ -7,6 +7,8 @@
         <param name="base_link" type="string" value="base_footprint" />
         <param name="odom_link" type="string" value="odom" />
         <param name="topic_octomap" type="string" value="/octomap_point_cloud_centers" />
+        <param name="robot_dimention_width" type="string" value="0.5" />
+        <param name="robot_dimention_height" type="string" value="0.5" />
         
     </node>
     
