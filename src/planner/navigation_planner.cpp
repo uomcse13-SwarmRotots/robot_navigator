@@ -7,6 +7,15 @@ float current_y_node;
 float current_z_node;
 float marker_z_cordinate;
 
+void NavigationPlanner::setParametersForground(float slope,float min_height,float max_height,int window_size){
+    slope_ = slope;
+    min_height_ = min_height;
+    max_height_ = max_height;
+    window_size_ = window_size;
+
+}
+
+
 bool NavigationPlanner::isRobotInside(float current_x_cordinate, float current_y_cordinate, float current_z_cordinate, float target_x_cordinate,float target_y_cordinate){
     float box_min_x = current_x_cordinate - box_dimension_;
     float box_max_x = current_x_cordinate + box_dimension_;
@@ -582,10 +591,10 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
 
         pcl::ProgressiveMorphologicalFilter<pcl::PointXYZ> pmf;
         pmf.setInputCloud (cloud_cube);
-        pmf.setMaxWindowSize (20);
-        pmf.setSlope (1.0f);
-        pmf.setInitialDistance (0.1f);
-        pmf.setMaxDistance (3.0f);
+        pmf.setMaxWindowSize (window_size_);
+        pmf.setSlope (slope_);
+        pmf.setInitialDistance (min_height_);
+        pmf.setMaxDistance (max_height_);
         pmf.extract (ground->indices);
 
         pcl::ExtractIndices<pcl::PointXYZ> extract;

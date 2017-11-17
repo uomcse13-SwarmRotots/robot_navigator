@@ -113,6 +113,7 @@ int main(int argc, char** argv)
 
     // navigation_planner = new NavigationPlanner(nh,topic_octomap);
     navigation_planner = new NavigationPlanner(nh,topic_octomap,0.3,0.3,-20,20,-20,20);
+    navigation_planner->setParametersForground(1.0f,0.1f,3.0f,20);
     navigation_planner->start();
 
     ros::NodeHandle simple_nh("move_base_simple");

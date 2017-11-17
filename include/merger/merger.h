@@ -20,6 +20,12 @@
 #include <octomap/octomap.h>
 #include <octomap_msgs/Octomap.h>
 #include <octomap_msgs/conversions.h>
+#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Pose.h>
+#include <nav_msgs/Odometry.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
+#include <geometry_msgs/PoseStamped.h>
 
 #define MAX_ITER 500
 
@@ -34,6 +40,7 @@ typedef pcl::PointCloud<PointNormalT> PointCloudWithNormals;
 using namespace octomap;
 using namespace octomath;
 using namespace octomap_msgs;
+using namespace geometry_msgs;
 using std::cout;
 using std::endl;
 
@@ -42,7 +49,6 @@ class Merger{
         /*
             variables
         */
-
         ros::Subscriber subscriber_node;
         ros::NodeHandle node_handle_;
         std::string topic_;

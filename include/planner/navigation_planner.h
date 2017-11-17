@@ -187,6 +187,10 @@ class NavigationPlanner{
         float max_x_cordinate_;
         float min_y_cordinate_;
         float max_y_cordinate_;
+        float slope_;
+        float min_height_;
+        float max_height_;
+        int window_size_;
 
         /*
             methods
@@ -231,5 +235,6 @@ class NavigationPlanner{
         void getFrontPlane(const geometry_msgs::PoseStamped& pose);
         std::vector<geometry_msgs::PoseStamped> getNavPlanToTarget(const geometry_msgs::PoseStamped& pose,const geometry_msgs::PoseStamped& target);
         ~NavigationPlanner();
+        void setParametersForground(float slope,float min_height,float max_height,int window_size);
 };
 #endif
