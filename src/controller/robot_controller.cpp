@@ -46,6 +46,16 @@ boost::thread* controller_thread = NULL;
 ------------------------------------------------
 */
 
+void rotateRobot(){
+  //ROS_INFO("%f",M_PI);
+  controller->turn(M_PI,true);
+  controller->turn(M_PI,true);
+  controller->turn(M_PI,true);
+  controller->turn(M_PI,true);
+  controller->turn(M_PI,true);
+  controller->turn(M_PI,true);
+}
+
 void autoDrive(){
   
   while(true){
@@ -64,19 +74,12 @@ void autoDrive(){
       if(!plan.empty()){
         visualizer->showPath(plan);
         controller->followPath(plan);
+        rotateRobot();
       }
   }
 }
 
-void rotateRobot(){
-  //ROS_INFO("%f",M_PI);
-  controller->turn(M_PI,true);
-  controller->turn(M_PI,true);
-  controller->turn(M_PI,true);
-  controller->turn(M_PI,true);
-  controller->turn(M_PI,true);
-  controller->turn(M_PI,true);
-}
+
 
 void stop(){
   isGoalTesting = false;
