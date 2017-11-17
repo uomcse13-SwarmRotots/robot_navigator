@@ -76,8 +76,8 @@ int main(int argc, char **argv)
    
     std_msgs::String msg;
 
-    std::stringstream ss;
-    ROS_INFO("robot controller: ");
+    std::string mode = "";
+    std::cout << mode <<" - robot controller: ";
     std::cin >> msg.data;    
 
     if(msg.data=="exit")
@@ -89,6 +89,14 @@ int main(int argc, char **argv)
     else if(msg.data=="rqt")
         system("rqt");
     else{
+        if(msg.data=="stop")
+          mode = "";
+        else if(msg.data=="goal")
+          mode = "goal mode";
+        else if(msg.data=="dgoal")
+          mode = "direct goal mode";
+        else if(msg.data=="auto")
+          mode = "auto navigation mode";
         chatter_pub.publish(msg);
         ros::spinOnce();
         loop_rate.sleep();

@@ -61,9 +61,10 @@ void autoDrive(){
                       navigation_planner->getNavPlan(current_position);
       ROS_INFO("Done planning....");
 
-      
-      visualizer->showPath(plan);
-      controller->followPath(plan);
+      if(!plan.empty()){
+        visualizer->showPath(plan);
+        controller->followPath(plan);
+      }
   }
 }
 
@@ -104,17 +105,17 @@ void achieveGoal(const geometry_msgs::PoseStamped& goal){
     ROS_INFO("Done planning....");
     // std::vector<geometry_msgs::PoseStamped> plan;    
    
-    visualizer->showPath(plan);
-    ROS_INFO("Done vitualizing....");
-    controller->followPath(plan);
+    if(!plan.empty()){
+      visualizer->showPath(plan);
+      ROS_INFO("Done vitualizing....");
+      controller->followPath(plan);
+    }
    
 }
 
 void achieveDirectGoal(const geometry_msgs::PoseStamped& goal){
-    ROS_INFO("Direct Goal Came....");   
-
-    controller->achieveGoal(goal);
-   
+    ROS_INFO("Direct Goal Came....");
+    controller->achieveGoal(goal);   
 }
 
 
