@@ -49,8 +49,8 @@ int main(int argc, char **argv)
   std::string robot_controller_topic;
 
   ros::NodeHandle private_nh("~");     
-  // private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/mobile_base/commands/velocity")); 
-  private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/cmd_vel"));
+  private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/mobile_base/commands/velocity")); 
+  // private_nh.param("cmd_vel_topic", cmd_vel_topic, std::string("/cmd_vel"));
   private_nh.param("robot_controller_topic", robot_controller_topic, std::string("robot_controller")); 
 
   /*
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
     std_msgs::String msg;
 
     std::stringstream ss;
-    std::cout << "robot controller: ";
+    ROS_INFO("robot controller: ");
     std::cin >> msg.data;    
 
     if(msg.data=="exit")
