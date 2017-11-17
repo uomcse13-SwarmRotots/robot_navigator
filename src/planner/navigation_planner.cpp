@@ -663,7 +663,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr NavigationPlanner::segmentBoundingCube(pcl::
 
    
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
-
+    ROS_INFO("Print %f, %f", min_z_cordinate, max_z_cordinate);
     pcl::PassThrough<pcl::PointXYZ> pass;
     pass.setInputCloud (object_cloud);
     pass.setFilterFieldName ("z");
@@ -726,8 +726,8 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
         float front_y = y_cordinate;
         if(!found_nodes->hasValue(front_x,front_y,z_cordinate) & !found_obstacles->hasValue(front_x,front_y,z_cordinate)){
             convex_cloud = getConvexHull(surrounding_cloud,front_x,front_y,z_cordinate,1,box_dimension_);
-            result = groundNonGroundExtraction(convex_cloud,1);
             marker_z_cordinate = z_cordinate;
+            result = groundNonGroundExtraction(convex_cloud,1);
             if(result == -1){
                 ROS_INFO("Return on 1");
                 return current_node;
@@ -736,7 +736,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = front_x;
                 temp_node->y_cordinate = front_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -775,7 +775,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = front_left_x;
                 temp_node->y_cordinate = front_left_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -813,7 +813,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = left_x;
                 temp_node->y_cordinate = left_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -850,7 +850,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = back_left_x;
                 temp_node->y_cordinate = back_left_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -887,7 +887,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = back_x;
                 temp_node->y_cordinate = back_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -924,7 +924,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = back_right_x;
                 temp_node->y_cordinate = back_right_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;       
@@ -961,7 +961,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = right_x;
                 temp_node->y_cordinate = right_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -999,7 +999,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = front_right_x;
                 temp_node->y_cordinate = front_right_y;
-                temp_node->z_cordinate = z_cordinate;
+                temp_node->z_cordinate = marker_z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -1054,12 +1054,19 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         
         if(isRobotInside(front_x,front_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
             ROS_INFO("Returned From 1");
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(front_x,front_y,z_cordinate) & !found_obstacles->hasValue(front_x,front_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,front_x,front_y,z_cordinate,1,box_dimension_);
-                result = groundNonGroundExtraction(convex_cloud,1);
                 marker_z_cordinate = z_cordinate;
+                result = groundNonGroundExtraction(convex_cloud,1);
+                
                 if(result == -1){
                     //ROS_INFO("Return on 1");
                     //return current_node;
@@ -1068,7 +1075,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
                     struct Graph_Node *temp_node = new Graph_Node;
                     temp_node->x_cordinate = front_x;
                     temp_node->y_cordinate = front_y;
-                    temp_node->z_cordinate = z_cordinate;
+                    temp_node->z_cordinate = marker_z_cordinate;
                     temp_node->predecessor = current_node;
                     temp_node->path_cost = current_node->path_cost+1;
                     temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -1097,7 +1104,13 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         float front_left_y = y_cordinate + box_dimension_;
     
         if(isRobotInside(front_left_x,front_left_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1.414;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(front_left_x,front_left_y,z_cordinate) && !found_obstacles->hasValue(front_left_x,front_left_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,front_left_x,front_left_y,z_cordinate,2,box_dimension_);
@@ -1140,7 +1153,13 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         float left_y = y_cordinate + box_dimension_;
 
         if(isRobotInside(left_x,left_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(left_x,left_y,z_cordinate) && !found_obstacles->hasValue(left_x,left_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,left_x,left_y,z_cordinate,3,box_dimension_);
@@ -1183,7 +1202,13 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         float back_left_y = y_cordinate + box_dimension_;
 
         if(isRobotInside(back_left_x,back_left_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1.414;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(back_left_x,back_left_y,z_cordinate) && !found_obstacles->hasValue(back_left_x,back_left_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,back_left_x,back_left_y,z_cordinate,4,box_dimension_);
@@ -1225,7 +1250,13 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         float back_y = y_cordinate;
 
         if(isRobotInside(back_x,back_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(back_x,back_y,z_cordinate) && !found_obstacles->hasValue(back_x,back_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,back_x,back_y,z_cordinate,5,box_dimension_);
@@ -1267,7 +1298,13 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         float back_right_y = y_cordinate - box_dimension_;
         
         if(isRobotInside(back_right_x,back_right_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1.414;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(back_right_x,back_right_y,z_cordinate) && !found_obstacles->hasValue(back_right_x,back_right_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,back_right_x,back_right_y,z_cordinate,6,box_dimension_);
@@ -1309,7 +1346,13 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         float right_y = y_cordinate - box_dimension_;
 
         if(isRobotInside(right_x,right_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(right_x,right_y,z_cordinate) && !found_obstacles->hasValue(right_x,right_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,right_x,right_y,z_cordinate,7,box_dimension_);
@@ -1352,7 +1395,13 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
         float front_right_y = y_cordinate - box_dimension_;
 
         if(isRobotInside(front_right_x,front_right_y,z_cordinate,target_x_cordinate,target_y_cordinate)){
-            return current_node;
+            struct Graph_Node *temp_node = new Graph_Node;
+            temp_node->x_cordinate = target_x_cordinate;
+            temp_node->y_cordinate = target_y_cordinate;
+            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->predecessor = current_node;
+            temp_node->path_cost = current_node->path_cost+1.414;
+            return temp_node;
         }else{
             if(!found_nodes->hasValue(front_right_x,front_right_y,z_cordinate) && !found_obstacles->hasValue(front_right_x,front_right_y,z_cordinate)){
                 convex_cloud = getConvexHull(surrounding_cloud,front_right_x,front_right_y,z_cordinate,8,box_dimension_);
@@ -1418,6 +1467,35 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPath(struct Gr
             pose.pose.position.x = temp_node1->x_cordinate;
             pose.pose.position.y = temp_node1->y_cordinate;
             pose.pose.position.z = temp_node1->marker_z_cordinate;
+            pose.pose.orientation.x = 0.0;
+            pose.pose.orientation.y = 0.0;
+            pose.pose.orientation.z = 0.0;
+            pose.pose.orientation.w = 0.0;
+            ROS_INFO("X %f , Y %f , Z %f",temp_node1->x_cordinate, temp_node1->y_cordinate, temp_node1->marker_z_cordinate);
+            plan.push_back(pose);    
+            temp_node1 = temp_node1->predecessor;
+        }
+        current_node=NULL;
+        ROS_INFO("PATH PLANNED");
+    }
+    return plan;
+  
+}
+
+std::vector<geometry_msgs::PoseStamped> NavigationPlanner::publishPathToTarget(struct Graph_Node *node){
+    ros::NodeHandle n;
+    ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
+    std::vector<geometry_msgs::PoseStamped> plan;
+    if(node == NULL){
+        ROS_INFO("NO PATH PLANNED");
+    }else{    
+        struct Graph_Node *temp_node = node;
+        geometry_msgs::PoseStamped pose;
+        struct Graph_Node *temp_node1 = temp_node;
+        while(temp_node1!=NULL){
+            pose.pose.position.x = temp_node1->x_cordinate;
+            pose.pose.position.y = temp_node1->y_cordinate;
+            pose.pose.position.z = temp_node1->z_cordinate;
             pose.pose.orientation.x = 0.0;
             pose.pose.orientation.y = 0.0;
             pose.pose.orientation.z = 0.0;
@@ -1562,7 +1640,7 @@ std::vector<geometry_msgs::PoseStamped> NavigationPlanner::getNavPlanToTarget(co
     while(!node_queue.empty()){
         node_queue.pop();
     }
-    return publishPath(node);
+    return publishPathToTarget(node);
 }
 
 void NavigationPlanner::startTraversal(const geometry_msgs::PoseStamped& pose){

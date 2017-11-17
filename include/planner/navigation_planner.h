@@ -218,7 +218,7 @@ class NavigationPlanner{
         bool planeTraversabilityCheck(float a,float b,float c,float e, float x0,float y0,float z0, float d, int type);
         struct Graph_Node* breadthFirstSearchToGoal(float x_cordinate, float y_cordinate, float z_cordinate, float goal_x_cordinate, float goal_y_cordinate, float goal_z_cordinate);
         bool isRobotInside(float current_x_cordinate, float current_y_cordinate, float current_z_cordinate, float target_x_cordinate,float target_y_cordinate);
-
+        std::vector<geometry_msgs::PoseStamped> publishPathToTarget(struct Graph_Node *node);
     public:
         /*
             methods

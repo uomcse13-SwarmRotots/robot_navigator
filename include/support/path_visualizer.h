@@ -23,6 +23,7 @@ public:
     visualization_msgs::Marker publishMarker(const geometry_msgs::PoseStamped& pose);
     void showPath(std::vector<geometry_msgs::PoseStamped>& plan);
     void showPoints(const geometry_msgs::PoseStamped& pose);
+    void showTargetPath(std::vector<geometry_msgs::PoseStamped>& plan);
 
 };
 #endif
