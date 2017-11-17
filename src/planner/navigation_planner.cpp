@@ -30,7 +30,7 @@ bool NavigationPlanner::isRobotInside(float current_x_cordinate, float current_y
     }
 }
 
-bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e, float x0,float y0,float z0, float d, int type){
+bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e, float x0,float y0,float z0, float d_, int type){
 	float a2_ = a/(sqrt(a*a+b*b+c*c));
     float b2_ = b/(sqrt(a*a+b*b+c*c));
     float c2_ = c/(sqrt(a*a+b*b+c*c));
@@ -38,6 +38,7 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
     float angle_y = acos(b2_);
     float angle_z = acos(c2_);
     float z;
+    float d = d_*2;
 	//Print angle	
     float acceptedAngle 	= 0.523599; // 30 degree
     float acceptedAngle90  = 1.39626; // 80 degree
@@ -58,143 +59,168 @@ bool NavigationPlanner::planeTraversabilityCheck(float a,float b,float c,float e
     std::cout<< "acceptedDistance_2 " << acceptedDistance_2 << endl;
     std::cout<< "acceptedDistance_3 " << acceptedDistance_3 << endl;
     std::cout<< "distance " << distance << endl;
+    ROS_INFO("Base  point %f %f %f",x0,y0,z0);
 
     switch(type){
         case 1:
-	    z = (-1*e - a*(x0+d) -b*y0)/c;
-	    std::cout << "New Z" << z << "Z diff " << z - z0 << endl;
+	    // z = (-1*e - a*(x0+d) -b*y0)/c;
+	    // std::cout << "New Z" << z << "Z diff " << z - z0 << endl;
             if(angle_y>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
-                        std::cout<< "traversable case 1+ " << endl;
+                        // std::cout<< "traversable case 1+ " << endl;
                         marker_z_cordinate = (-1*e - a*(x0+d) -b*y0)/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 1: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
-                        std::cout<< "traversable case 1-" << endl;
+                        // std::cout<< "traversable case 1-" << endl;
                         marker_z_cordinate = (-1*e - a*(x0+d) -b*y0)/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 1: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else {
-                        std::cout<< "un-traversable case 1" << endl;
+                        // std::cout<< "un-traversable case 1" << endl;
+                        ROS_INFO("Case 1: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                         return false;
                     }
                 }
                 else {
-                    std::cout<< "un-traversable case 1o" << endl;
+                    // std::cout<< "un-traversable case 1o" << endl;
+                    ROS_INFO("Case 1: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                     return false;
                 }
             }
-            std::cout<< "un-traversable o" << endl;
+            // std::cout<< "un-traversable o" << endl;
+            ROS_INFO("Case 1: U-T New z- %f Old z %f",marker_z_cordinate,z0);
             return false;
             break;
         case 3:
-	    z = (-1*e - a*x0 -b*(y0+d))/c;
-	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
+	    // z = (-1*e - a*x0 -b*(y0+d))/c;
+	    // std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
             if(angle_x>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
-                        std::cout<< "traversable case 3+" << endl;
+                        // std::cout<< "traversable case 3+" << endl;
                         marker_z_cordinate = (-1*e - a*x0 -b*(y0+d))/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 3: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
-                        std::cout<< "traversable case 3-" << endl;
+                        // std::cout<< "traversable case 3-" << endl;
                         marker_z_cordinate = (-1*e - a*x0 -b*(y0+d))/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 3: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else {
-                        std::cout<< "un-traversable case 3" << endl;
+                        // std::cout<< "un-traversable case 3" << endl;
+                        ROS_INFO("Case 3: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                         return false;
                     }
                 }
                 else {
-                    std::cout<< "un-traversable case 3o" << endl;
+                    // std::cout<< "un-traversable case 3o" << endl;
+                    ROS_INFO("Case 3: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                     return false;
                 }
             }
-            std::cout<< "un-traversable o" << endl;
+            // std::cout<< "un-traversable o" << endl;
+            ROS_INFO("Case 3: U-T New z- %f Old z %f",marker_z_cordinate,z0);
             return false;
             break;
         case 5:
-	    z = (-1*e - a*(x0-d) -b*y0)/c;
-	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
+	    // z = (-1*e - a*(x0-d) -b*y0)/c;
+	    // std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
             if(angle_y>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
-                        std::cout<< "traversable case 5+" << endl;
+                        // std::cout<< "traversable case 5+" << endl;
                         marker_z_cordinate = (-1*e - a*(x0-d) -b*y0)/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 5: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
-                        std::cout<< "traversable case 5-" << endl;
+                        // std::cout<< "traversable case 5-" << endl;
                         marker_z_cordinate = (-1*e - a*(x0-d) -b*y0)/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 5: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else {
-                        std::cout<< "un-traversable case 5" << endl;
+                        // std::cout<< "un-traversable case 5" << endl;
+                        ROS_INFO("Case 5: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                         return false;
                     }
                 }
                 else {
-                    std::cout<< "un-traversable case 5o" << endl;
+                    // std::cout<< "un-traversable case 5o" << endl;
+                    ROS_INFO("Case 5: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                     return false;
                 }
             }
-            std::cout<< "un-traversable o" << endl;
+            // std::cout<< "un-traversable o" << endl;
+            ROS_INFO("Case 5: U-T New z- %f Old z %f",marker_z_cordinate,z0);
             return false;
             break;
         case 7:
-	    z = (-1*e - a*x0 -b*(y0-d))/c;
-	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
+	    // z = (-1*e - a*x0 -b*(y0-d))/c;
+	    // std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
             if(angle_x>acceptedAngle90){
                 if(angle_z<acceptedAngle){ 
                     if(distance>=0 && distance > acceptedDistance_3){
-                        std::cout<< "traversable case 7+" << endl;
+                        // std::cout<< "traversable case 7+" << endl;
                         marker_z_cordinate = (-1*e - a*x0 -b*(y0-d))/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 7: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else if (distance<0 && (distance*(-1)) > acceptedDistance_3){
-                        std::cout<< "traversable case 7-" << endl;
+                        // std::cout<< "traversable case 7-" << endl;
                         marker_z_cordinate = (-1*e - a*x0 -b*(y0-d))/c;
-                        std::cout<< "New Z " << marker_z_cordinate << endl;
+                        // std::cout<< "New Z " << marker_z_cordinate << endl;
+                        ROS_INFO("Case 7: T New z- %f Old z %f",marker_z_cordinate,z0);
                         return true;
                     }
                     else {
-                        std::cout<< "un-traversable case 7" << endl;
+                        // std::cout<< "un-traversable case 7" << endl;
+                        ROS_INFO("Case 7: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                         return false;
                     }
                 }
                 else {
-                    std::cout<< "un-traversable case 7o" << endl;
+                    // std::cout<< "un-traversable case 7o" << endl;
+                    ROS_INFO("Case 7: U-T New z- %f Old z %f",marker_z_cordinate,z0);
                     return false;
                 }
             }
-            std::cout<< "un-traversable o" << endl;
+            // std::cout<< "un-traversable o" << endl;
+            ROS_INFO("Case 7: U-T New z- %f Old z %f",marker_z_cordinate,z0);
             return false;
             break;
         case 2:
 	    z = (-1*e - a*(x0+d) -b*(y0+d))/c;
-	    std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
+        // std::cout<< "New Z" << z <<  "Z diff " << z - z0 << endl;
+        ROS_INFO("Case 2: U-T New z- %f Old z %f",z,z0);
 	    return false;
         case 4:
 	    z = (-1*e - a*(x0-d) -b*(y0+d))/c;
-	    std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+        // std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+        ROS_INFO("Case 4: U-T New z- %f Old z %f",z,z0);
 	    return false;
         case 6:
 	    z = (-1*e - a*(x0-d) -b*(y0-d))/c;
-	    std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+        // std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+        ROS_INFO("Case 6: U-T New z- %f Old z %f",z,z0);
 	    return false;
         case 8:
 	    z = (-1*e - a*(x0+d) -b*(y0-d))/c;
-	    std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+        // std::cout<< "New Z" << z << "Z diff " << z - z0 << endl;
+        ROS_INFO("Case 8: U-T New z- %f Old z %f",z,z0);
 	    return false;
         default:
             return false;
