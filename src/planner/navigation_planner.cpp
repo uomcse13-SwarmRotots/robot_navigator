@@ -762,7 +762,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = front_x;
                 temp_node->y_cordinate = front_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -801,7 +801,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = front_left_x;
                 temp_node->y_cordinate = front_left_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -839,7 +839,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = left_x;
                 temp_node->y_cordinate = left_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -876,7 +876,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = back_left_x;
                 temp_node->y_cordinate = back_left_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -913,7 +913,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = back_x;
                 temp_node->y_cordinate = back_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -950,7 +950,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = back_right_x;
                 temp_node->y_cordinate = back_right_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;       
@@ -987,7 +987,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = right_x;
                 temp_node->y_cordinate = right_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -1025,7 +1025,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
                 struct Graph_Node *temp_node = new Graph_Node;
                 temp_node->x_cordinate = front_right_x;
                 temp_node->y_cordinate = front_right_y;
-                temp_node->z_cordinate = marker_z_cordinate;
+                temp_node->z_cordinate = z_cordinate;
                 temp_node->predecessor = current_node;
                 temp_node->path_cost = current_node->path_cost+1.414;
                 temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -1070,7 +1070,8 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
     
     if(min_x_cordinate_<x_cordinate && max_x_cordinate_>x_cordinate && min_y_cordinate_<y_cordinate && max_y_cordinate_>y_cordinate){
         pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
-        pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cloud = segmentBoundingCube(cloud,current_z_node-robot_height_,current_z_node+robot_height_);
+        //pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cloud = segmentBoundingCube(cloud,current_z_node-robot_height_,current_z_node+robot_height_);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cloud = cloud;
         ROS_INFO("size is :  %d",surrounding_cloud->size());
         int result;
         ROS_INFO("0 %f %f %f",x_cordinate, y_cordinate, z_cordinate);
@@ -1101,7 +1102,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
                     struct Graph_Node *temp_node = new Graph_Node;
                     temp_node->x_cordinate = front_x;
                     temp_node->y_cordinate = front_y;
-                    temp_node->z_cordinate = marker_z_cordinate;
+                    temp_node->z_cordinate = z_cordinate;
                     temp_node->predecessor = current_node;
                     temp_node->path_cost = current_node->path_cost+1;
                     temp_node->marker_z_cordinate = marker_z_cordinate;
@@ -1133,7 +1134,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
             struct Graph_Node *temp_node = new Graph_Node;
             temp_node->x_cordinate = target_x_cordinate;
             temp_node->y_cordinate = target_y_cordinate;
-            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
             return temp_node;
@@ -1182,7 +1183,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
             struct Graph_Node *temp_node = new Graph_Node;
             temp_node->x_cordinate = target_x_cordinate;
             temp_node->y_cordinate = target_y_cordinate;
-            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1;
             return temp_node;
@@ -1231,7 +1232,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
             struct Graph_Node *temp_node = new Graph_Node;
             temp_node->x_cordinate = target_x_cordinate;
             temp_node->y_cordinate = target_y_cordinate;
-            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
             return temp_node;
@@ -1279,7 +1280,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
             struct Graph_Node *temp_node = new Graph_Node;
             temp_node->x_cordinate = target_x_cordinate;
             temp_node->y_cordinate = target_y_cordinate;
-            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1;
             return temp_node;
@@ -1327,7 +1328,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
             struct Graph_Node *temp_node = new Graph_Node;
             temp_node->x_cordinate = target_x_cordinate;
             temp_node->y_cordinate = target_y_cordinate;
-            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
             return temp_node;
@@ -1375,7 +1376,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
             struct Graph_Node *temp_node = new Graph_Node;
             temp_node->x_cordinate = target_x_cordinate;
             temp_node->y_cordinate = target_y_cordinate;
-            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1;
             return temp_node;
@@ -1424,7 +1425,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearchToGoal(float x_cordinate
             struct Graph_Node *temp_node = new Graph_Node;
             temp_node->x_cordinate = target_x_cordinate;
             temp_node->y_cordinate = target_y_cordinate;
-            temp_node->z_cordinate = marker_z_cordinate;
+            temp_node->z_cordinate = z_cordinate;
             temp_node->predecessor = current_node;
             temp_node->path_cost = current_node->path_cost+1.414;
             return temp_node;

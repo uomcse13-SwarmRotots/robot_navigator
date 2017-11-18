@@ -1,8 +1,8 @@
 <launch>   
 
     <node name="robot_remote_controller" pkg="robot_navigator" type="robot_remote_controller" output="screen">
-        <param name="cmd_vel_topic" type="string" value="/cmd_vel" />
-        <!-- <param name="cmd_vel_topic" type="string" value="/mobile_base/commands/velocity" /> -->
+        <!-- <param name="cmd_vel_topic" type="string" value="/cmd_vel" /> -->
+        <param name="cmd_vel_topic" type="string" value="/mobile_base/commands/velocity" />
     </node>
     
 </launch>
