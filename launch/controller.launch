@@ -6,13 +6,14 @@
         <param name="odom_topic" type="string" value="/odom" />
         <param name="base_link" type="string" value="base_footprint" />
         <param name="odom_link" type="string" value="odom" />
-        <param name="topic_octomap" type="string" value="/octomap_point_cloud_centers" />
-        <param name="robot_dimention_width" type="double" value="0.2" />
-        <param name="robot_dimention_height" type="double" value="0.2" />
-        <param name="robot_area_x_min" type="int" value="1" />
-        <param name="robot_area_x_max" type="int" value="5" />
-        <param name="robot_area_y_min" type="int" value="0" />
-        <param name="robot_area_y_max" type="int" value="3" />
+        <!-- <param name="topic_octomap" type="string" value="/octomap_point_cloud_centers" /> -->
+        <param name="topic_octomap" type="string" value="/rtabmap/cloud_map" />
+        <param name="robot_dimention_width" type="double" value="0.15" />
+        <param name="robot_dimention_height" type="double" value="0.15" />
+        <param name="robot_area_x_min" type="int" value="-20" />
+        <param name="robot_area_x_max" type="int" value="20" />
+        <param name="robot_area_y_min" type="int" value="-20" />
+        <param name="robot_area_y_max" type="int" value="20" />
 
         <param name="window_size" type="int" value="20" />
         <param name="min_distance" type="double" value="0.1" />

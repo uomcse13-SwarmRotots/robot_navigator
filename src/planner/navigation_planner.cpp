@@ -653,7 +653,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         extract.filter (*cloud_filtered);
         bool ground_cloud = false;
         pcl::PCDWriter writer;
-        if(cloud_filtered->size()>0){
+        if(cloud_filtered->size()>100){
             ground_cloud = true;
             writer.write<pcl::PointXYZ> ("samp11-utm_ground.pcd", *cloud_filtered, false);      
 	}
@@ -661,7 +661,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         extract.setNegative (true);
         extract.filter (*cloud_filtered);
 
-        if(cloud_filtered->size()>0){
+        if(cloud_filtered->size()>20){
             //clusterObjects(cloud_filtered);
             bool is_traversable = false;//planerCoefficientApproximation(cloud_filtered,type);
             if(is_traversable){
@@ -700,17 +700,26 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr NavigationPlanner::segmentBoundingCube(pcl::
 }
 
 void NavigationPlanner::cloudCallback(const PointCloud::ConstPtr& msg){
-    cloud->width  = msg->width;
-    cloud->height = msg->height;
-    cloud->points.resize (cloud->width * cloud->height);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1 (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
+    cloud1->width  = msg->width;
+    cloud1->height = msg->height;
+    cloud1->points.resize (cloud1->width * cloud1->height);
 
     int i=0;
     BOOST_FOREACH (const pcl::PointXYZ& pt, msg->points){
-        cloud->points[i].x = pt.x;
-        cloud->points[i].y = pt.y;
-        cloud->points[i].z = pt.z;
+        cloud1->points[i].x = pt.x;
+        cloud1->points[i].y = pt.y;
+        cloud1->points[i].z = pt.z;
         i++;
     }
+
+    pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+    sor.setInputCloud (cloud1);
+    sor.setMeanK (50);
+    sor.setStddevMulThresh (1.0);
+    sor.filter (*cloud_filtered);
+    cloud = cloud_filtered;
 }
 
 

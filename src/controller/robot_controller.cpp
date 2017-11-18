@@ -74,7 +74,7 @@ void autoDrive(){
       if(!plan.empty()){
         visualizer->showPath(plan);
         controller->followPath(plan);
-        rotateRobot();
+        //rotateRobot();
       }
   }
 }
@@ -139,6 +139,7 @@ void controlCallback(const std_msgs::String::ConstPtr& msg){
   }
   else if(msg->data=="rotate"){
     stop();
+    ROS_INFO("Rotating");
     if(controller_thread==NULL)
       controller_thread = new boost::thread(boost::bind(rotateRobot));
   }

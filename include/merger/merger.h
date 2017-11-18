@@ -11,6 +11,7 @@
 #include <pcl/registration/icp.h>
 #include <pcl/registration/icp_nl.h>
 #include <pcl/registration/transforms.h>
+
 #include <octomap/OcTree.h>
 #include <fstream> 
 #include <iostream>
@@ -26,6 +27,7 @@
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <geometry_msgs/PoseStamped.h>
+
 
 #define MAX_ITER 500
 
