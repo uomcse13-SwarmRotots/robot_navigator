@@ -750,7 +750,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
 
         float front_x = x_cordinate + box_dimension_;
         float front_y = y_cordinate;
-        if(!found_nodes->hasValue(front_x,front_y,z_cordinate) & !found_obstacles->hasValue(front_x,front_y,z_cordinate)){
+        if(!found_nodes->hasValue(front_x,front_y,z_cordinate) && !found_obstacles->hasValue(front_x,front_y,z_cordinate)){
             convex_cloud = getConvexHull(surrounding_cloud,front_x,front_y,z_cordinate,1,box_dimension_);
             marker_z_cordinate = z_cordinate;
             result = groundNonGroundExtraction(convex_cloud,1);
