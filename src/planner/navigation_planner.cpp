@@ -663,7 +663,7 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         if(cloud_filtered->size()>0){
             //writer.write<pcl::PointXYZ> ("samp11-utm_object.pcd", *cloud_filtered, false);
             //clusterObjects(cloud_filtered);
-            bool is_traversable = planerCoefficientApproximation(cloud_filtered,type);
+            bool is_traversable = false;//planerCoefficientApproximation(cloud_filtered,type);
             if(is_traversable){
                 return 1;
             }else{
