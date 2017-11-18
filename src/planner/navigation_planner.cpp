@@ -655,13 +655,13 @@ int  NavigationPlanner::groundNonGroundExtraction(pcl::PointCloud<pcl::PointXYZ>
         pcl::PCDWriter writer;
         if(cloud_filtered->size()>0){
             ground_cloud = true;
-        }
+            writer.write<pcl::PointXYZ> ("samp11-utm_ground.pcd", *cloud_filtered, false);      
+	}
 
         extract.setNegative (true);
         extract.filter (*cloud_filtered);
 
         if(cloud_filtered->size()>0){
-            //writer.write<pcl::PointXYZ> ("samp11-utm_object.pcd", *cloud_filtered, false);
             //clusterObjects(cloud_filtered);
             bool is_traversable = false;//planerCoefficientApproximation(cloud_filtered,type);
             if(is_traversable){
@@ -743,7 +743,7 @@ struct Graph_Node* NavigationPlanner::breadthFirstSearch(float x_cordinate, floa
     
     if(min_x_cordinate_<x_cordinate && max_x_cordinate_>x_cordinate && min_y_cordinate_<y_cordinate && max_y_cordinate_>y_cordinate){
         pcl::PointCloud<pcl::PointXYZ>::Ptr convex_cloud;
-        pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cloud = segmentBoundingCube(cloud,current_z_node-robot_height_,current_z_node+robot_height_);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr surrounding_cloud = cloud;//segmentBoundingCube(cloud,current_z_node-robot_height_,current_z_node+robot_height_);
         ROS_INFO("size is :  %d",surrounding_cloud->size());
         int result;
         ROS_INFO("0 %f %f %f",x_cordinate, y_cordinate, z_cordinate);
